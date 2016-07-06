@@ -1,8 +1,14 @@
 package com.radindustries.radman.catchamovie;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,17 +16,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by radman on 7/6/16.
  */
 public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
-    public static final String LOG_TAG = GetMoviesTask.class.getSimpleName();
+    private static final String LOG_TAG = GetMoviesTask.class.getSimpleName();
+    private Context context;
+    private ArrayList<GridItem> mGridData;
+    private MoviesAdapter moviesAdapter;
+
+    public GetMoviesTask(Context context, MoviesAdapter moviesAdapter, ArrayList<GridItem> gridItems) {
+        this.context = context;
+        this.moviesAdapter = moviesAdapter;
+        this.mGridData = gridItems;
+    }
 
     @Override
     protected Integer doInBackground(String... params) {
-        int result = 0;
 
         if (params.length == 0) {
             return null;
@@ -35,7 +50,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         // Will contain the raw JSON response as a string.
         String movieJsonStr = null;
 
-        String apiKey = "b27bf3ea7724c708e10e78138ef74f26"; //my movie api key
+        String apiKey = "b27bf3ea7724c708e10e78138ef74f26"; //my movieDB api key
 
         try{
 
@@ -60,7 +75,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
-                return null;
+                return 0;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -74,11 +89,12 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
-                return null;
+                return 0;
             }
             movieJsonStr = buffer.toString();
 
             Log.v(LOG_TAG, "JSON String: " + movieJsonStr);
+            inputStream.close();
 
         } catch(IOException e) {
             Log.e(LOG_TAG, "IOException error: ", e);
@@ -96,6 +112,110 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
             }
         }
 
-        return 0;
+        //parse the data out
+        try{
+            getMoviePosterData(movieJsonStr);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+
+        return 1;
     }
+
+    @Override
+    protected void onPostExecute(Integer result) {
+        if (result == 1) {
+            moviesAdapter.setGridData(mGridData);
+        } else {
+            Toast.makeText(context, "Failed to get data", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void getMoviePosterData(String movieJsonStr) throws JSONException {
+
+        final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w185";
+        final String BASE_POSTER_URI_SMALL = "http://image.tmdb.org/t/p/w92";
+
+        final String MDB_ID = "id";
+        final String MDB_OVERVIEW = "overview";
+        final String MDB_POSTER_PATH = "poster_path";
+        final String MDB_TITLE = "title";
+        final String MDB_VOTER_AVERAGE = "vote_average";
+        final String MDB_RELEASE_DATE = "release_date";
+        final String MDB_RESULTS = "results";
+
+        try{
+            JSONObject movielist = new JSONObject(movieJsonStr);
+            JSONArray movies = movielist.getJSONArray(MDB_RESULTS);
+            GridItem item;
+            for (int i = 0; i < movies.length(); i++) {
+                //initialise variables
+                int id = 0;
+                String overviewStr = null;
+                String posterRawPathStr;
+                String posterProperPathStr;
+                String titleStr = null;
+                float voteAvgStr = 0;
+                String releaseDateStr;
+                JSONObject movie = movies.getJSONObject(i);
+
+                //extract data
+                id = movie.getInt(MDB_ID);
+                overviewStr = movie.getString(MDB_OVERVIEW);
+                titleStr = movie.getString(MDB_TITLE);
+                posterRawPathStr = movie.getString(MDB_POSTER_PATH);
+                voteAvgStr = (float) movie.getDouble(MDB_VOTER_AVERAGE);
+                releaseDateStr = formatReleaseDate(movie.getString(MDB_RELEASE_DATE));
+                Log.v(LOG_TAG, "Release date: " + releaseDateStr);
+
+                //deal with movie posters
+                item = new GridItem();
+
+                posterProperPathStr = correctPosterPath(posterRawPathStr);
+
+                Uri posterUri = Uri.parse(BASE_POSTER_URL)
+                        .buildUpon().appendPath(posterProperPathStr).build();
+                Log.v(LOG_TAG, "Movie poster Uri: " + posterUri.toString());
+
+                String posterPath = posterUri.toString();
+                item.setImage(posterPath);
+                mGridData.add(item);
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+
+    }
+
+    private String formatReleaseDate(String releaseDate) {
+        String[] tokens = releaseDate.split("-");
+        String month = null, day;
+        switch (tokens[1]) {
+            case "01": month = "Jan"; break;
+            case "02": month = "Feb"; break;
+            case "03": month = "Mar"; break;
+            case "04": month = "Apr"; break;
+            case "05": month = "May"; break;
+            case "06": month = "Jun"; break;
+            case "07": month = "Jul"; break;
+            case "08": month = "Aug"; break;
+            case "09": month = "Sep"; break;
+            case "10": month = "Oct"; break;
+            case "11": month = "Nov"; break;
+            case "12": month = "Dec"; break;
+        }
+        int dayInt = Integer.parseInt(tokens[2]);
+        day = Integer.toString(dayInt);
+        return day + " " + month + " " + tokens[0];
+    }
+
+    private String correctPosterPath(String posterRawPath) {
+        StringBuilder correctStr = new StringBuilder(posterRawPath);
+        correctStr.deleteCharAt(0);
+        return correctStr.toString();
+    }
+
 }
