@@ -7,14 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import java.util.ArrayList;
+
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MoviesFragment extends Fragment {
 
+    private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
     private MoviesAdapter moviesAdapter;
+    private ArrayList<GridItem> mGridData;
+    private GridView mGridView;
 
-    public MainActivityFragment() {
+    public MoviesFragment() {
     }
 
     @Override
@@ -22,10 +27,11 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        moviesAdapter = new MoviesAdapter(getContext());
-        GridView gridView = (GridView) rootView.findViewById(R.id.griditem_movies);
-        gridView.setAdapter(moviesAdapter);
-
+        //create the GridView, the ArrayList of data, and the ArrayAdapter to the GridView
+        mGridView = (GridView) rootView.findViewById(R.id.griditem_movies);
+        mGridData = new ArrayList<>();
+        moviesAdapter = new MoviesAdapter(getContext(), R.layout.grid_item_movie_posters, mGridData);
+        mGridView.setAdapter(moviesAdapter);
 
         return rootView;
     }
