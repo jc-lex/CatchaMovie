@@ -33,6 +33,9 @@ public class MoviesFragment extends Fragment {
         moviesAdapter = new MoviesAdapter(getContext(), R.layout.grid_item_movie_posters, mGridData);
         mGridView.setAdapter(moviesAdapter);
 
+        //execute the AsyncTask
+        new GetMoviesTask().execute("popular");
+
         return rootView;
     }
 
