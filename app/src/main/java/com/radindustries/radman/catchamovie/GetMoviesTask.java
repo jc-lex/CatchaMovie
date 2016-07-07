@@ -146,20 +146,25 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         final String MDB_RELEASE_DATE = "release_date";
         final String MDB_RESULTS = "results";
 
+
         try{
             JSONObject movielist = new JSONObject(movieJsonStr);
             JSONArray movies = movielist.getJSONArray(MDB_RESULTS);
             GridItem item;
+
+            //initialise variables
+            int id = 0;
+            String overviewStr = null;
+            String posterRawPathStr;
+            String posterProperPathStr;
+            String titleStr = null;
+            float voteAvgStr = 0;
+            String releaseDateStr;
+            JSONObject movie;
+
             for (int i = 0; i < movies.length(); i++) {
-                //initialise variables
-                int id = 0;
-                String overviewStr = null;
-                String posterRawPathStr;
-                String posterProperPathStr;
-                String titleStr = null;
-                float voteAvgStr = 0;
-                String releaseDateStr;
-                JSONObject movie = movies.getJSONObject(i);
+
+                movie = movies.getJSONObject(i);
 
                 //extract data
                 id = movie.getInt(MDB_ID);

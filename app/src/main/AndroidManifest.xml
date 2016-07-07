@@ -29,6 +29,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.radindustries.radman.catchamovie.MainActivity" />
         </activity>
+        <activity
+            android:name=".MovieSettingsActivity"
+            android:label="@string/title_activity_movie_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.radindustries.radman.catchamovie.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
