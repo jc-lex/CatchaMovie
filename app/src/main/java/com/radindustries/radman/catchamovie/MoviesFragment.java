@@ -2,6 +2,7 @@ package com.radindustries.radman.catchamovie;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,6 +25,20 @@ public class MoviesFragment extends Fragment {
 
     public MoviesFragment() {}
 
+    private void updateMovies() {
+        GetMoviesTask getMoviesTask = new GetMoviesTask(getContext(), moviesAdapter, mGridData);
+        String sortType = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_movie_sort_type_key),
+                        getString(R.string.pref_movie_sort_type_default));
+        getMoviesTask.execute(sortType);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateMovies();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +57,7 @@ public class MoviesFragment extends Fragment {
         mGridView.setAdapter(moviesAdapter);
 
         //execute the AsyncTask
-        new GetMoviesTask(getContext(), moviesAdapter, mGridData).execute("popular");
+        //new GetMoviesTask(getContext(), moviesAdapter, mGridData).execute("popular");
 
         //create intent for the MovieDetail activity
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
