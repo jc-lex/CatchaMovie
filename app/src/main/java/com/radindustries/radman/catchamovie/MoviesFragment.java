@@ -1,11 +1,13 @@
 package com.radindustries.radman.catchamovie;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import java.util.ArrayList;
@@ -41,6 +43,15 @@ public class MoviesFragment extends Fragment {
 
         //execute the AsyncTask
         new GetMoviesTask(getContext(), moviesAdapter, mGridData).execute("popular");
+
+        //create intent for the MovieDetail activity
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
