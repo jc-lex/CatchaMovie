@@ -62,4 +62,9 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="pref_movie_sort_type_default">popular</string>
+    <string name="pref_movie_sort_type_title">Movie Sort Type</string>
+    <string name="pref_movie_sort_type_key">sort_type</string>
+
 </resources>
