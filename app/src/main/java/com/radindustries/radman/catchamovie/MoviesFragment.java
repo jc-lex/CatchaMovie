@@ -48,7 +48,9 @@ public class MoviesFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                GridItem item = (GridItem) parent.getItemAtPosition(position);
                 Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+                intent.putExtra("Image", item.getImage());
                 startActivity(intent);
             }
         });

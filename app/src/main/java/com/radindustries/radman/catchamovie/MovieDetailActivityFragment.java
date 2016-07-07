@@ -5,11 +5,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
+    ImageView imageView;
 
     public MovieDetailActivityFragment() {
     }
@@ -19,7 +23,9 @@ public class MovieDetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
-//        Intent intent = getActivity().getIntent();
+        String image = getActivity().getIntent().getStringExtra("Image");
+        imageView = (ImageView) rootView.findViewById(R.id.movie_poster_imageView);
+        Picasso.with(getContext()).load(image).into(imageView);
 
         return rootView;
     }
