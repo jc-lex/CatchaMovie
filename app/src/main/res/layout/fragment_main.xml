@@ -13,7 +13,7 @@
         android:numColumns="auto_fit"
         android:gravity="center"
         android:stretchMode="columnWidth"
-        android:columnWidth="120dp"
+        android:columnWidth="128dp"
         android:focusable="true"
         android:background="@color/colorPrimary" />
 
