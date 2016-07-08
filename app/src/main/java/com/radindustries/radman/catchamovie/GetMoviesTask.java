@@ -135,8 +135,8 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
     private void getMoviePosterData(String movieJsonStr) throws JSONException {
 
-        final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w185";
-        final String BASE_POSTER_URI_SMALL = "http://image.tmdb.org/t/p/w92";
+        final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";
+        //final String BASE_POSTER_URI_SMALL = "http://image.tmdb.org/t/p/w500";
 
         final String MDB_ID = "id";
         final String MDB_OVERVIEW = "overview";

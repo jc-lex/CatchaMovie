@@ -1,78 +1,94 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context="com.radindustries.radman.catchamovie.MovieDetailActivityFragment"
-    tools:showIn="@layout/activity_movie_detail" >
+    tools:showIn="@layout/activity_movie_detail"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@color/colorPrimary">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:textColor="@color/colorPrimaryDark"
-        android:text="My Movie"
-        android:id="@+id/movie_title_textview"
-        android:paddingLeft="32dp"
-        android:paddingRight="16dp"
-        android:paddingTop="32dp"
-        android:paddingBottom="16dp"
-        android:textSize="36sp" />
+        android:background="@color/colorPrimary"
+        android:paddingBottom="16dp">
 
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="210dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/sample_movie_image"
-        android:layout_below="@+id/movie_title_textview"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:id="@+id/movie_poster_imageView" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/colorWhite"
+            android:text="My Movie"
+            android:id="@+id/movie_title_textview"
+            android:paddingLeft="24dp"
+            android:paddingRight="16dp"
+            android:paddingTop="32dp"
+            android:paddingBottom="16dp"
+            android:textSize="27sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/movie_poster_imageView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp"
-        android:text="This is the plot synopsis."
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:id="@+id/movie_overview_textview"/>
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="210dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/sample_movie_image"
+            android:layout_below="@+id/movie_title_textview"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:id="@+id/movie_poster_imageView" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="20 Jun 2016"
-        android:textSize="18sp"
-        android:layout_toRightOf="@+id/movie_poster_imageView"
-        android:layout_marginLeft="32dp"
-        android:layout_below="@+id/movie_title_textview"
-        android:layout_marginTop="24dp"
-        android:id="@+id/movie_release_date_textview"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/movie_poster_imageView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="30dp"
+            android:text="This is the plot synopsis."
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="32dp"
+            android:textSize="17sp"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/movie_overview_textview"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="8.1 / 10"
-        android:layout_below="@+id/movie_release_date_textview"
-        android:layout_toRightOf="@+id/movie_poster_imageView"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="8dp"
-        android:id="@+id/movie_rating_textview"
-        android:textSize="16sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20 Jun 2016"
+            android:textSize="18sp"
+            android:textColor="@color/colorWhite"
+            android:layout_toRightOf="@+id/movie_poster_imageView"
+            android:layout_marginLeft="32dp"
+            android:layout_below="@+id/movie_title_textview"
+            android:layout_marginTop="24dp"
+            android:id="@+id/movie_release_date_textview"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Mark As\n Favourite"
-        android:layout_toRightOf="@+id/movie_poster_imageView"
-        android:layout_below="@+id/movie_rating_textview"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="32dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8.1 / 10"
+            android:layout_below="@+id/movie_release_date_textview"
+            android:layout_toRightOf="@+id/movie_poster_imageView"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="8dp"
+            android:id="@+id/movie_rating_textview"
+            android:textSize="17sp"
+            android:textColor="@color/colorWhite"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mark As\n Favourite"
+            android:layout_toRightOf="@+id/movie_poster_imageView"
+            android:layout_below="@+id/movie_rating_textview"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="32dp"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/colorWhite" />
 
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</ScrollView>
