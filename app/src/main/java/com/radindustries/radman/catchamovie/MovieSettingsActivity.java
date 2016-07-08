@@ -3,6 +3,7 @@ package com.radindustries.radman.catchamovie;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -108,6 +109,7 @@ public class MovieSettingsActivity extends AppCompatPreferenceActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         addPreferencesFromResource(R.xml.pref_general);
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_movie_sort_type_key)));
     }
