@@ -91,9 +91,10 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 // Stream was empty.  No point in parsing.
                 return 0;
             }
-            movieJsonStr = buffer.toString();
 
+            movieJsonStr = buffer.toString();
             Log.v(LOG_TAG, "JSON String: " + movieJsonStr);
+
             inputStream.close();
 
         } catch(IOException e) {
@@ -135,7 +136,11 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
     private void getMoviePosterData(String movieJsonStr) throws JSONException {
 
+        //HttpURLConnection connection = null;
+        //BufferedReader reader = null;
+
         final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";
+        //final String MOVIE_REVIEW_URL = "http://api.themoviedb.org/3/movie";
         //final String BASE_POSTER_URI_SMALL = "http://image.tmdb.org/t/p/w500";
 
         final String MDB_ID = "id";
@@ -145,6 +150,9 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         final String MDB_VOTER_AVERAGE = "vote_average";
         final String MDB_RELEASE_DATE = "release_date";
         final String MDB_RESULTS = "results";
+//        final String MDB_REVIEWS = "content";
+//        final String MDB_REVIEW_AUTHOR = "author";
+//        final String MDB_TRAILER_YOUTUBE_KEY = "key";
 
 
         try{
@@ -153,13 +161,14 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
             GridItem item;
 
             //initialise variables
-            int id = 0;
-            String overviewStr = null;
+            int id;
+            String overviewStr;
             String posterRawPathStr;
             String posterProperPathStr;
-            String titleStr = null;
-            float voteAvgStr = 0;
+            String titleStr;
+            String voteAvgStr;
             String releaseDateStr;
+            //String JSONReviewStr;
             JSONObject movie;
 
             for (int i = 0; i < movies.length(); i++) {
@@ -171,11 +180,11 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 overviewStr = movie.getString(MDB_OVERVIEW);
                 titleStr = movie.getString(MDB_TITLE);
                 posterRawPathStr = movie.getString(MDB_POSTER_PATH);
-                voteAvgStr = (float) movie.getDouble(MDB_VOTER_AVERAGE);
+                voteAvgStr = movie.getString(MDB_VOTER_AVERAGE) + " / 10";
                 releaseDateStr = formatReleaseDate(movie.getString(MDB_RELEASE_DATE));
                 Log.v(LOG_TAG, "Release date: " + releaseDateStr);
 
-                //deal with movie posters
+                //give the data to the grid item
                 item = new GridItem();
 
                 posterProperPathStr = correctPosterPath(posterRawPathStr);
@@ -185,7 +194,14 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 Log.v(LOG_TAG, "Movie poster Uri: " + posterUri.toString());
 
                 String posterPath = posterUri.toString();
+
                 item.setImage(posterPath);
+                item.setTitle(titleStr);
+                item.setReleaseDate(releaseDateStr);
+                item.setUserRating(voteAvgStr);
+                item.setPlotSynopsis(overviewStr);
+                item.setMovieId(id);
+
                 mGridData.add(item);
             }
         } catch (JSONException e) {

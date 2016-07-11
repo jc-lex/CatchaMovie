@@ -65,7 +65,11 @@ public class MoviesFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 GridItem item = (GridItem) parent.getItemAtPosition(position);
                 Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-                intent.putExtra("Image", item.getImage());
+                intent.putExtra("Image", item.getImage())
+                        .putExtra("Title", item.getTitle())
+                        .putExtra("Release Date", item.getReleaseDate())
+                        .putExtra("User Rating", item.getUserRating())
+                        .putExtra("Plot Synopsis", item.getPlotSynopsis());
                 startActivity(intent);
             }
         });
