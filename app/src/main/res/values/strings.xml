@@ -66,5 +66,9 @@
     <string name="pref_movie_sort_type_default">popular</string>
     <string name="pref_movie_sort_type_title">Movie Sort Type</string>
     <string name="pref_movie_sort_type_key">sort_type</string>
+    <string name="movie_plot_title">Plot Overview:</string>
+    <string name="movie_reviews_title">Movie Reviews:</string>
+    <string name="fav_button_text">Mark As\n Favourite</string>
+    <string name="movie_trailers_title_text">Movie Trailers</string>
 
 </resources>

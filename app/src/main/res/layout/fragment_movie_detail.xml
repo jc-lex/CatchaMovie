@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:id="@+id/list_items_detail"
         android:paddingBottom="16dp">
 
         <TextView
@@ -18,7 +19,6 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDark"
             android:textColor="@color/colorWhite"
-            android:text="My Movie"
             android:id="@+id/movie_title_textview"
             android:paddingLeft="24dp"
             android:paddingRight="16dp"
@@ -30,7 +30,6 @@
             android:layout_width="150dp"
             android:layout_height="210dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/sample_movie_image"
             android:layout_below="@+id/movie_title_textview"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -42,11 +41,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/movie_poster_imageView"
+            android:layout_below="@+id/movie_overview_title_textView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="30dp"
-            android:text="This is the plot synopsis."
+            android:layout_marginTop="8dp"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="32dp"
             android:textSize="17sp"
@@ -56,7 +54,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="20 Jun 2016"
             android:textSize="18sp"
             android:textColor="@color/colorWhite"
             android:layout_toRightOf="@+id/movie_poster_imageView"
@@ -68,7 +65,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="8.1 / 10"
             android:layout_below="@+id/movie_release_date_textview"
             android:layout_toRightOf="@+id/movie_poster_imageView"
             android:layout_marginLeft="32dp"
@@ -80,13 +76,68 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mark As\n Favourite"
+            android:text="@string/fav_button_text"
             android:layout_toRightOf="@+id/movie_poster_imageView"
             android:layout_below="@+id/movie_rating_textview"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="32dp"
             android:background="@color/colorPrimaryDark"
             android:textColor="@color/colorWhite" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:textSize="19sp"
+            android:text="@string/movie_plot_title"
+            android:layout_below="@+id/movie_poster_imageView"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="24dp"
+            android:id="@+id/movie_overview_title_textView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/movie_reviews_title"
+            android:textColor="@color/colorWhite"
+            android:textSize="19sp"
+            android:layout_below="@+id/movie_overview_textview"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="24dp"
+            android:id="@+id/movie_reviews_title_textView"/>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/movie_reviews_title_textView"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:id="@+id/list_item_reviews"
+            android:clickable="false"
+            android:minHeight="?android:attr/listPreferredItemHeight"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/list_item_reviews"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="24dp"
+            android:text="@string/movie_trailers_title_text"
+            android:textColor="@color/colorWhite"
+            android:textSize="19sp"
+            android:id="@+id/movie_trailers_title_textview" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/list_item_trailers"
+            android:layout_below="@+id/movie_trailers_title_textview"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:clickable="true"
+            android:minHeight="?android:attr/listPreferredItemHeight"/>
 
 
     </RelativeLayout>

@@ -69,7 +69,9 @@ public class MoviesFragment extends Fragment {
                         .putExtra("Title", item.getTitle())
                         .putExtra("Release Date", item.getReleaseDate())
                         .putExtra("User Rating", item.getUserRating())
-                        .putExtra("Plot Synopsis", item.getPlotSynopsis());
+                        .putExtra("Plot Synopsis", item.getPlotSynopsis())
+                        .putExtra("Reviews", item.getReviews())
+                        .putExtra("Trailers", item.getTrailers());
                 startActivity(intent);
             }
         });

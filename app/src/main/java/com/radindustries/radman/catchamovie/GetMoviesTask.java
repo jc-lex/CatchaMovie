@@ -29,6 +29,8 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
     private ArrayList<GridItem> mGridData;
     private MoviesAdapter moviesAdapter;
     private static String apiKey = "b27bf3ea7724c708e10e78138ef74f26";
+    //private static int numOfMoviesReviewed = 0;
+    //private static int numOfMoviesTrailered = 0;
 
     public GetMoviesTask(Context context, MoviesAdapter moviesAdapter,
                          ArrayList<GridItem> gridItems) {
@@ -185,7 +187,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 //extract data
                 titleStr = movie.getString(MDB_TITLE);
                 id = movie.getInt(MDB_ID);
-                Log.v(LOG_TAG, titleStr + "\'s ID: " + id);
+                //Log.v(LOG_TAG, titleStr + "\'s ID: " + id);
                 overviewStr = movie.getString(MDB_OVERVIEW);
                 posterRawPathStr = movie.getString(MDB_POSTER_PATH);
                 voteAvgStr = movie.getString(MDB_VOTER_AVERAGE) + " / 10";
@@ -322,6 +324,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         JSONObject reviews = new JSONObject(JSONReviewString);
         JSONArray results = reviews.getJSONArray(resultsKey);
         String[] reviewArray = new String[results.length()];
+        //numOfMoviesReviewed++;
         try{
             String contentStr;
             String authorStr;
@@ -331,6 +334,8 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 contentStr = review.getString(content);
                 authorStr = review.getString(author);
                 reviewArray[i] = contentStr + "\n\n" + authorStr;
+//                Log.d(LOG_TAG, "review" +(i+1) +" of movie"
+//                        + numOfMoviesReviewed + " is: " + reviewArray[i]);
             }
             //Log.d(LOG_TAG, "reviews are " + reviewArray.length);
         } catch (JSONException e) {
@@ -345,6 +350,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         JSONArray results = trailers.getJSONArray(resultsKey);
         String[] trailersArray = new String[results.length()];
         final String YT_BASE_URL = "https://www.youtube.com/watch";
+        //numOfMoviesTrailered++;
         try {
             JSONObject keyObj;
             Uri YT_TRAILER_URI;
@@ -353,6 +359,8 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 YT_TRAILER_URI = Uri.parse(YT_BASE_URL).buildUpon()
                         .appendQueryParameter("v", keyObj.getString(key)).build();
                 trailersArray[i] = YT_TRAILER_URI.toString();
+//                Log.d(LOG_TAG, "trailer" +(i+1) +" of movie"
+//                        + numOfMoviesTrailered + " is: " + trailersArray[i]);
             }
             //Log.d(LOG_TAG, "trailers are " + trailersArray.length);
         } catch (JSONException e) {
