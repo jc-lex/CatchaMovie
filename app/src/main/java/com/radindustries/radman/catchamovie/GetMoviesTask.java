@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -27,8 +28,10 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
     private Context context;
     private ArrayList<GridItem> mGridData;
     private MoviesAdapter moviesAdapter;
+    private static String apiKey = "b27bf3ea7724c708e10e78138ef74f26";
 
-    public GetMoviesTask(Context context, MoviesAdapter moviesAdapter, ArrayList<GridItem> gridItems) {
+    public GetMoviesTask(Context context, MoviesAdapter moviesAdapter,
+                         ArrayList<GridItem> gridItems) {
         this.context = context;
         this.moviesAdapter = moviesAdapter;
         this.mGridData = gridItems;
@@ -50,8 +53,6 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         // Will contain the raw JSON response as a string.
         String movieJsonStr = null;
 
-        String apiKey = "b27bf3ea7724c708e10e78138ef74f26"; //my movieDB api key
-
         try{
 
             final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie";
@@ -61,7 +62,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                     .appendPath(movieQuery)
                     .appendQueryParameter(API_QUERY_PARAM, apiKey).build();
 
-            Log.v(LOG_TAG, "Built URI: " + builtUri.toString());
+            //Log.v(LOG_TAG, "Built Movies URI: " + builtUri.toString());
 
             URL url = new URL(builtUri.toString());
 
@@ -93,7 +94,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
             }
 
             movieJsonStr = buffer.toString();
-            Log.v(LOG_TAG, "JSON String: " + movieJsonStr);
+            //Log.v(LOG_TAG, "Movie JSON String: " + movieJsonStr);
 
             inputStream.close();
 
@@ -108,7 +109,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    Log.e(LOG_TAG, "Error closing reader", e);
                 }
             }
         }
@@ -136,12 +137,12 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
     private void getMoviePosterData(String movieJsonStr) throws JSONException {
 
-        //HttpURLConnection connection = null;
-        //BufferedReader reader = null;
-
         final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";
-        //final String MOVIE_REVIEW_URL = "http://api.themoviedb.org/3/movie";
-        //final String BASE_POSTER_URI_SMALL = "http://image.tmdb.org/t/p/w500";
+        final String MOVIE_REVIEW_AND_TRAILER_URL = "http://api.themoviedb.org/3/movie";
+        final String MOVIE_TRAILER_PARAM = "videos";
+        final String MOVIE_REVIEWS_PARAM = "reviews";
+        final String API_QUERY_PARAM = "api_key";
+        //final String BASE_POSTER_URI_BIG = "http://image.tmdb.org/t/p/w500";
 
         final String MDB_ID = "id";
         final String MDB_OVERVIEW = "overview";
@@ -150,9 +151,12 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         final String MDB_VOTER_AVERAGE = "vote_average";
         final String MDB_RELEASE_DATE = "release_date";
         final String MDB_RESULTS = "results";
-//        final String MDB_REVIEWS = "content";
-//        final String MDB_REVIEW_AUTHOR = "author";
-//        final String MDB_TRAILER_YOUTUBE_KEY = "key";
+        final String MDB_REVIEWS = "content";
+        final String MDB_REVIEW_AUTHOR = "author";
+        final String MDB_TRAILER_YOUTUBE_KEY = "key";
+
+        HttpURLConnection connection = null;
+        BufferedReader reader = null;
 
 
         try{
@@ -168,7 +172,10 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
             String titleStr;
             String voteAvgStr;
             String releaseDateStr;
-            //String JSONReviewStr;
+            String trailersStr;
+            String reviewStr;
+            String[] reviews;
+            String[] trailers;
             JSONObject movie;
 
             for (int i = 0; i < movies.length(); i++) {
@@ -176,13 +183,66 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 movie = movies.getJSONObject(i);
 
                 //extract data
-                id = movie.getInt(MDB_ID);
-                overviewStr = movie.getString(MDB_OVERVIEW);
                 titleStr = movie.getString(MDB_TITLE);
+                id = movie.getInt(MDB_ID);
+                Log.v(LOG_TAG, titleStr + "\'s ID: " + id);
+                overviewStr = movie.getString(MDB_OVERVIEW);
                 posterRawPathStr = movie.getString(MDB_POSTER_PATH);
                 voteAvgStr = movie.getString(MDB_VOTER_AVERAGE) + " / 10";
                 releaseDateStr = formatReleaseDate(movie.getString(MDB_RELEASE_DATE));
-                Log.v(LOG_TAG, "Release date: " + releaseDateStr);
+                //Log.v(LOG_TAG, titleStr + "\'s Release date: " + releaseDateStr);
+
+                //get the review and trailer strings for the individual movie
+                Uri trailerUri = Uri.parse(MOVIE_REVIEW_AND_TRAILER_URL).buildUpon()
+                        .appendPath(Integer.toString(id)).appendPath(MOVIE_TRAILER_PARAM)
+                        .appendQueryParameter(API_QUERY_PARAM, apiKey).build();
+                Uri reviewUri = Uri.parse(MOVIE_REVIEW_AND_TRAILER_URL).buildUpon()
+                        .appendPath(Integer.toString(id)).appendPath(MOVIE_REVIEWS_PARAM)
+                        .appendQueryParameter(API_QUERY_PARAM, apiKey).build();
+
+                //Log.v(LOG_TAG, "Built trailers URI for " + titleStr + ": " + trailerUri.toString());
+                //Log.v(LOG_TAG, "Built reviews URI for " + titleStr + ": " + reviewUri.toString());
+
+                URL url = new URL(trailerUri.toString());
+
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+
+                InputStream inputStream = connection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) return;
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) { buffer.append(line + "\n"); }
+
+                if (buffer.length() == 0) return;
+
+                trailersStr = buffer.toString();
+                //Log.v(LOG_TAG, titleStr +"\'s Trailers String: " + trailersStr);
+
+                url = new URL(reviewUri.toString());
+
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+
+                inputStream = connection.getInputStream();
+                buffer = new StringBuffer();
+                if (inputStream == null) return;
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                while ((line = reader.readLine()) != null) { buffer.append(line + "\n"); }
+
+                if (buffer.length() == 0) return;
+
+                reviewStr = buffer.toString();
+                //Log.v(LOG_TAG, titleStr +"\'s Reviews String: " + reviewStr);
+                inputStream.close();
+
+                reviews = getReviews(MDB_RESULTS, reviewStr, MDB_REVIEWS, MDB_REVIEW_AUTHOR);
+                trailers = getTrailers(MDB_RESULTS, trailersStr, MDB_TRAILER_YOUTUBE_KEY);
 
                 //give the data to the grid item
                 item = new GridItem();
@@ -191,7 +251,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
                 Uri posterUri = Uri.parse(BASE_POSTER_URL)
                         .buildUpon().appendPath(posterProperPathStr).build();
-                Log.v(LOG_TAG, "Movie poster Uri: " + posterUri.toString());
+                //Log.v(LOG_TAG, "Movie poster Uri: " + posterUri.toString());
 
                 String posterPath = posterUri.toString();
 
@@ -201,12 +261,30 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 item.setUserRating(voteAvgStr);
                 item.setPlotSynopsis(overviewStr);
                 item.setMovieId(id);
+                item.setReviews(reviews);
+                item.setTrailers(trailers);
 
                 mGridData.add(item);
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "IOException error: ", e);
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing reader ", e);
+                }
+            }
         }
 
     }
@@ -237,6 +315,50 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         StringBuilder correctStr = new StringBuilder(posterRawPath);
         correctStr.deleteCharAt(0);
         return correctStr.toString();
+    }
+
+    private String[] getReviews(String resultsKey, String JSONReviewString,
+                                String content, String author) throws JSONException {
+        JSONObject reviews = new JSONObject(JSONReviewString);
+        JSONArray results = reviews.getJSONArray(resultsKey);
+        String[] reviewArray = new String[results.length()];
+        try{
+            String contentStr;
+            String authorStr;
+            JSONObject review;
+            for (int i = 0; i < results.length(); i++) {
+                review = results.getJSONObject(i);
+                contentStr = review.getString(content);
+                authorStr = review.getString(author);
+                reviewArray[i] = contentStr + "\n\n" + authorStr;
+            }
+            //Log.d(LOG_TAG, "reviews are " + reviewArray.length);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return reviewArray;
+    }
+
+    private String[] getTrailers(String resultsKey, String JSONTrailersString, String key)
+        throws JSONException {
+        JSONObject trailers = new JSONObject(JSONTrailersString);
+        JSONArray results = trailers.getJSONArray(resultsKey);
+        String[] trailersArray = new String[results.length()];
+        final String YT_BASE_URL = "https://www.youtube.com/watch";
+        try {
+            JSONObject keyObj;
+            Uri YT_TRAILER_URI;
+            for (int i = 0; i < results.length(); i++) {
+                keyObj = results.getJSONObject(i);
+                YT_TRAILER_URI = Uri.parse(YT_BASE_URL).buildUpon()
+                        .appendQueryParameter("v", keyObj.getString(key)).build();
+                trailersArray[i] = YT_TRAILER_URI.toString();
+            }
+            //Log.d(LOG_TAG, "trailers are " + trailersArray.length);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return trailersArray;
     }
 
 }

@@ -8,6 +8,8 @@ public class GridItem {
     private String releaseDate;
     private String userRating;
     private String plotSynopsis;
+    private String[] reviews;
+    private String[] trailers;
 
     public GridItem() {
         super();
@@ -59,5 +61,21 @@ public class GridItem {
 
     public void setMovieId(int movieId) {
         this.movieId = movieId;
+    }
+
+    public String[] getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(String[] reviews) {
+        this.reviews = reviews;
+    }
+
+    public String[] getTrailers() {
+        return trailers;
+    }
+
+    public void setTrailers(String[] trailers) {
+        this.trailers = trailers;
     }
 }
