@@ -6,6 +6,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.radindustries.radman.catchamovie.adapters.MoviesAdapter;
+import com.radindustries.radman.catchamovie.utilities.GridItem;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

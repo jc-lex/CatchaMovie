@@ -1,4 +1,4 @@
-package com.radindustries.radman.catchamovie;
+package com.radindustries.radman.catchamovie.utilities;
 
 public class GridItem {
 

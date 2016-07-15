@@ -1,4 +1,4 @@
-package com.radindustries.radman.catchamovie;
+package com.radindustries.radman.catchamovie.fragments;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.radindustries.radman.catchamovie.MovieReviewsAdapter;
+import com.radindustries.radman.catchamovie.MovieTrailersAdapter;
+import com.radindustries.radman.catchamovie.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
