@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.radindustries.radman.catchamovie.R;
-import com.radindustries.radman.catchamovie.utilities.Review;
+import com.radindustries.radman.catchamovie.datamodels.Review;
 
 import java.util.List;
 

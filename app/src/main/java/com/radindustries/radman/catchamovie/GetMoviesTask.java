@@ -7,9 +7,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.radindustries.radman.catchamovie.adapters.MoviesAdapter;
-import com.radindustries.radman.catchamovie.utilities.GridItem;
-import com.radindustries.radman.catchamovie.utilities.Review;
-import com.radindustries.radman.catchamovie.utilities.Trailer;
+import com.radindustries.radman.catchamovie.datamodels.GridItem;
+import com.radindustries.radman.catchamovie.datamodels.Review;
+import com.radindustries.radman.catchamovie.datamodels.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;

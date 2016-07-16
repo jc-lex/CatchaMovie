@@ -1,4 +1,4 @@
-package com.radindustries.radman.catchamovie.utilities;
+package com.radindustries.radman.catchamovie.datamodels;
 
 import android.os.Parcel;
 import android.os.Parcelable;

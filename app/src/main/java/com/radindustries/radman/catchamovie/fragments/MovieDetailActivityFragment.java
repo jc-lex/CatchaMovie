@@ -16,7 +16,7 @@ import com.radindustries.radman.catchamovie.R;
 import com.radindustries.radman.catchamovie.adapters.MovieReviewsAdapter;
 import com.radindustries.radman.catchamovie.adapters.MovieTrailersAdapter;
 import com.radindustries.radman.catchamovie.listeners.RecyclerItemClickListener;
-import com.radindustries.radman.catchamovie.utilities.GridItem;
+import com.radindustries.radman.catchamovie.datamodels.GridItem;
 import com.squareup.picasso.Picasso;
 
 /**

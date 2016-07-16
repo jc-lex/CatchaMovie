@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.radindustries.radman.catchamovie.GetMoviesTask;
-import com.radindustries.radman.catchamovie.utilities.GridItem;
+import com.radindustries.radman.catchamovie.datamodels.GridItem;
 import com.radindustries.radman.catchamovie.MovieDetailActivity;
 import com.radindustries.radman.catchamovie.R;
 import com.radindustries.radman.catchamovie.adapters.MoviesAdapter;

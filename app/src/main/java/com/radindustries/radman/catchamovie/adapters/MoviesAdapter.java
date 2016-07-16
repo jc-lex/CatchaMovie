@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import com.radindustries.radman.catchamovie.utilities.GridItem;
+import com.radindustries.radman.catchamovie.datamodels.GridItem;
 import com.radindustries.radman.catchamovie.R;
 import com.squareup.picasso.Picasso;
 
