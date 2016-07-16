@@ -4,40 +4,36 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.radindustries.radman.catchamovie.MovieReviewsAdapter;
-import com.radindustries.radman.catchamovie.MovieTrailersAdapter;
 import com.radindustries.radman.catchamovie.R;
+import com.radindustries.radman.catchamovie.adapters.MovieReviewsAdapter;
+import com.radindustries.radman.catchamovie.adapters.MovieTrailersAdapter;
+import com.radindustries.radman.catchamovie.listeners.RecyclerItemClickListener;
+import com.radindustries.radman.catchamovie.utilities.GridItem;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailActivityFragment extends Fragment {
+
     private ImageView moviePosterImageView;
     private TextView movieTitleTextView;
     private TextView movieReleaseDateTextView;
     private TextView movieUserRatingTextView;
     private TextView moviePlotSynopsisTextView;
-    private ListView movieReviewsListView;
-    private ListView movieTrailersListView;
+    private RecyclerView movieReviewsRecyclerView;
+    private RecyclerView movieTrailersRecyclerView;
 
-    private List<String> reviewsList;
-    private List<String> trailersList;
     private MovieReviewsAdapter reviewsAdapter;
     private MovieTrailersAdapter trailersAdapter;
-
 
     public MovieDetailActivityFragment() {}
 
@@ -47,15 +43,7 @@ public class MovieDetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
         //get data form intent
-        String image = getActivity().getIntent().getStringExtra("Image");
-        String title = getActivity().getIntent().getStringExtra("Title");
-        String releaseDate = getActivity().getIntent().getStringExtra("Release Date");
-        String userRating = getActivity().getIntent().getStringExtra("User Rating");
-        String plotSynopsis = getActivity().getIntent().getStringExtra("Plot Synopsis");
-        String[] reviews = getActivity().getIntent().getStringArrayExtra("Reviews");
-        reviewsList = new ArrayList<>(Arrays.asList(reviews));
-        String[] trailers = getActivity().getIntent().getStringArrayExtra("Trailers");
-        trailersList = new ArrayList<>(Arrays.asList(trailers));
+        final GridItem item = getActivity().getIntent().getExtras().getParcelable("Movie");
 
         //get the views to display the received data
         moviePosterImageView = (ImageView) rootView.findViewById(R.id.movie_poster_imageView);
@@ -63,35 +51,50 @@ public class MovieDetailActivityFragment extends Fragment {
         movieReleaseDateTextView = (TextView) rootView.findViewById(R.id.movie_release_date_textview);
         movieUserRatingTextView = (TextView) rootView.findViewById(R.id.movie_rating_textview);
         moviePlotSynopsisTextView = (TextView) rootView.findViewById(R.id.movie_overview_textview);
-        movieReviewsListView = (ListView) rootView.findViewById(R.id.list_item_reviews);
-        movieTrailersListView = (ListView) rootView.findViewById(R.id.list_item_trailers);
+
+        movieReviewsRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_reviews);
+        movieReviewsRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager reviewManager = new LinearLayoutManager(getContext());
+        reviewManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        movieReviewsRecyclerView.setLayoutManager(reviewManager);
+
+        movieTrailersRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_trailers);
+        movieTrailersRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager trailerManager = new LinearLayoutManager(getContext());
+        trailerManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        movieTrailersRecyclerView.setLayoutManager(trailerManager);
 
         //set the data to the views
-        Picasso.with(getContext()).load(image).into(moviePosterImageView);
-        movieTitleTextView.setText(title);
-        movieReleaseDateTextView.setText(releaseDate);
-        movieUserRatingTextView.setText(userRating);
-        moviePlotSynopsisTextView.setText(plotSynopsis);
+        Picasso.with(getContext()).load(item.getImage()).into(moviePosterImageView);
+        movieTitleTextView.setText(item.getTitle());
+        movieReleaseDateTextView.setText(item.getReleaseDate());
+        movieUserRatingTextView.setText(item.getUserRating());
+        moviePlotSynopsisTextView.setText(item.getPlotSynopsis());
 
-        reviewsAdapter = new MovieReviewsAdapter(getActivity(),
-                R.layout.list_item_review_textview,
-                R.id.list_item_review_textview,
-                reviewsList);
-        trailersAdapter = new MovieTrailersAdapter(getActivity(), R.layout.list_item_trailer_view,
-                R.id.list_item_trailer_textview, trailersList);
-        movieReviewsListView.setAdapter(reviewsAdapter);
-        movieTrailersListView.setAdapter(trailersAdapter);
+        reviewsAdapter = new MovieReviewsAdapter(item.getReviewArrayList());
+        trailersAdapter = new MovieTrailersAdapter(item.getTrailerArrayList());
+        movieReviewsRecyclerView.setAdapter(reviewsAdapter);
+        movieTrailersRecyclerView.setAdapter(trailersAdapter);
 
-        movieTrailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //set click listener to the trailers
+        movieTrailersRecyclerView
+                .addOnItemTouchListener(
+                        new RecyclerItemClickListener(getContext(),
+                                movieTrailersRecyclerView,
+                                new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(View v, int position) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                Uri trailerUri = Uri.parse(trailersList.get(position)).buildUpon().build();
-                intent.setData(trailerUri);
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null)
+                intent.setData(Uri.parse(item.getTrailerArrayList().get(position)
+                        .getUrl()).buildUpon().build());
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(intent);
+                }
             }
-        });
+
+            @Override
+            public void onLongItemClick(View view, int position) {}
+        }));
 
         return rootView;
     }

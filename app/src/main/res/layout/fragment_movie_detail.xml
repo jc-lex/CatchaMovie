@@ -24,7 +24,8 @@
             android:paddingRight="16dp"
             android:paddingTop="32dp"
             android:paddingBottom="16dp"
-            android:textSize="27sp" />
+            android:textSize="27sp"
+            android:textStyle="bold"/>
 
         <ImageView
             android:layout_width="150dp"
@@ -93,6 +94,7 @@
             android:layout_below="@+id/movie_poster_imageView"
             android:layout_marginTop="24dp"
             android:layout_marginLeft="24dp"
+            android:textStyle="bold"
             android:id="@+id/movie_overview_title_textView" />
 
         <TextView
@@ -101,43 +103,45 @@
             android:text="@string/movie_reviews_title"
             android:textColor="@color/colorWhite"
             android:textSize="19sp"
-            android:layout_below="@+id/movie_overview_textview"
+            android:layout_below="@+id/recyclerview_trailers"
             android:layout_marginLeft="24dp"
             android:layout_marginTop="24dp"
+            android:textStyle="bold"
             android:id="@+id/movie_reviews_title_textView"/>
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/movie_reviews_title_textView"
             android:layout_marginTop="8dp"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            android:id="@+id/list_item_reviews"
+            android:id="@+id/recyclerview_reviews"
             android:clickable="false"
-            android:minHeight="?android:attr/listPreferredItemHeight"/>
+            android:minHeight="?android:attr/listPreferredItemHeight" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/list_item_reviews"
+            android:layout_below="@+id/movie_overview_textview"
             android:layout_marginTop="24dp"
             android:layout_marginLeft="24dp"
             android:text="@string/movie_trailers_title_text"
             android:textColor="@color/colorWhite"
             android:textSize="19sp"
+            android:textStyle="bold"
             android:id="@+id/movie_trailers_title_textview" />
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/list_item_trailers"
+            android:id="@+id/recyclerview_trailers"
             android:layout_below="@+id/movie_trailers_title_textview"
             android:layout_marginTop="8dp"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:clickable="true"
-            android:minHeight="?android:attr/listPreferredItemHeight"/>
+            android:minHeight="?android:attr/listPreferredItemHeight" />
 
 
     </RelativeLayout>
