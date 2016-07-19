@@ -1,4 +1,4 @@
-package com.radindustries.radman.catchamovie;
+package com.radindustries.radman.catchamovie.dbtests;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -22,6 +22,7 @@ public class TestDBHelper extends AndroidTestCase {
     }
 
     public void testMoviesTable() {
+
         SQLiteDatabase db = movieDBHelper.getWritableDatabase();
         assertTrue("Error: database not open", db.isOpen());
 
@@ -72,6 +73,73 @@ public class TestDBHelper extends AndroidTestCase {
 
         cursor.close();
         db.close();
+
+    }
+
+    public void testTrailerTable() {
+
+        SQLiteDatabase db = movieDBHelper.getWritableDatabase();
+        assertTrue("Error: database is not open", db.isOpen());
+
+        ContentValues cv = new ContentValues();
+        cv.put(MoviesContract.TrailerEntry.COL_MOVIE_ID, 5986);
+        cv.put(MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_NAME, "Trailer 1");
+        cv.put(MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL,
+                "http://www.youtube.com/watch?v=96599yfw");
+
+        long rowId = db.insert(MoviesContract.TrailerEntry.TABLE_NAME,
+                MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL, cv);
+        assertTrue("Error: could not insert the row in the Trailer Table", rowId != -1);
+
+        Cursor cursor = db.query(MoviesContract.TrailerEntry.TABLE_NAME, null, null, null,
+                null, null, null);
+        assertTrue("Error: could not get results from the table", cursor.moveToFirst());
+
+        int id = cursor.getInt(cursor.getColumnIndex(MoviesContract.TrailerEntry.COL_MOVIE_ID));
+        String name = cursor.getString(cursor
+                .getColumnIndex(MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_NAME));
+        String url = cursor.getString(cursor
+                .getColumnIndex(MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL));
+
+        assertEquals(5986, id);
+        assertEquals("Trailer 1", name);
+        assertEquals("http://www.youtube.com/watch?v=96599yfw", url);
+
+        cursor.close();
+        db.close();
+
+    }
+
+    public void testReviewTable() {
+
+        SQLiteDatabase db = movieDBHelper.getWritableDatabase();
+        assertTrue("Error: db is not open", db.isOpen());
+
+        ContentValues cv = new ContentValues();
+        cv.put(MoviesContract.ReviewEntry.COL_MOVIE_ID, 5964);
+        cv.put(MoviesContract.ReviewEntry.COL_MOVIE_REVIEW_AUTHOR, "Sir. Hesketh Bell");
+        cv.put(MoviesContract.ReviewEntry.COL_MOVIE_REVIEW, "it was the best movie of all time!");
+
+        long rowId = db.insert(MoviesContract.ReviewEntry.TABLE_NAME,
+                MoviesContract.ReviewEntry.COL_MOVIE_REVIEW, cv);
+        assertTrue("Error: the row was not inserted in the table", rowId != -1);
+
+        Cursor cursor = db.query(MoviesContract.ReviewEntry.TABLE_NAME, null, null, null,
+                null, null, null);
+        assertTrue("Error: could not get a row of data back", cursor.moveToFirst());
+
+        int id = cursor.getInt(cursor.getColumnIndex(MoviesContract.ReviewEntry.COL_MOVIE_ID));
+        String author = cursor.getString(cursor
+                .getColumnIndex(MoviesContract.ReviewEntry.COL_MOVIE_REVIEW_AUTHOR));
+        String review = cursor.getString(cursor.getColumnIndex(MoviesContract.ReviewEntry.COL_MOVIE_REVIEW));
+
+        assertEquals(5964, id);
+        assertEquals("Sir. Hesketh Bell", author);
+        assertEquals("it was the best movie of all time!", review);
+
+        cursor.close();
+        db.close();
+
     }
 
     @Override
@@ -79,4 +147,5 @@ public class TestDBHelper extends AndroidTestCase {
         super.tearDown();
         mContext.deleteDatabase(MovieDBHelper.DATABASE_NAME);
     }
+
 }
