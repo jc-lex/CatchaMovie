@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MovieDBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "movie_database.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     Context context;
 
     public MovieDBHelper(Context context) {
@@ -31,7 +31,9 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 MoviesContract.MoviesEntry.COL_MOVIE_USER_RATING + " TEXT NOT NULL, " +
                 MoviesContract.MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS + " TEXT NOT NULL, " +
                 MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING + " TEXT NOT NULL, " +
-                MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " INTEGER DEFAULT 0 " + ");";
+                MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " INTEGER DEFAULT 0, " +
+                        "UNIQUE (" + MoviesContract.MoviesEntry.COL_MOVIE_ID +
+                        ") ON CONFLICT REPLACE" + ");";
         final String CREATE_TRAILER_TABLE =
                 "CREATE TABLE " + MoviesContract.TrailerEntry.TABLE_NAME + " (" +
                 MoviesContract.TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -40,7 +42,9 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL + " TEXT, " +
                 "FOREIGN KEY (" + MoviesContract.TrailerEntry.COL_MOVIE_ID + ") REFERENCES " +
                 MoviesContract.MoviesEntry.TABLE_NAME + "(" +
-                        MoviesContract.MoviesEntry.COL_MOVIE_ID + ")" + ");";
+                        MoviesContract.MoviesEntry.COL_MOVIE_ID + "), " +
+                        "UNIQUE (" + MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL +
+                        ") ON CONFLICT REPLACE" + ");";
         final String CREATE_REVIEWS_TABLE =
                 "CREATE TABLE " + MoviesContract.ReviewEntry.TABLE_NAME + " (" +
                 MoviesContract.ReviewEntry._ID + " INTEGER PRIMARY KEY NOT NULL, " +
@@ -49,7 +53,9 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 MoviesContract.ReviewEntry.COL_MOVIE_REVIEW + " TEXT, " +
                 "FOREIGN KEY (" + MoviesContract.ReviewEntry.COL_MOVIE_ID + ") REFERENCES " +
                 MoviesContract.MoviesEntry.TABLE_NAME + "(" +
-                        MoviesContract.MoviesEntry.COL_MOVIE_ID + ")" + ");";
+                        MoviesContract.MoviesEntry.COL_MOVIE_ID + "), " +
+                        "UNIQUE (" + MoviesContract.ReviewEntry.COL_MOVIE_REVIEW +
+                        ") ON CONFLICT REPLACE" + ");";
         try {
             db.execSQL(CREATE_MOVIE_TABLE);
             db.execSQL(CREATE_TRAILER_TABLE);
