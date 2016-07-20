@@ -16,13 +16,13 @@ public class MoviesProvider extends ContentProvider {
 
     public static final int MOVIES = 100;
     public static final int MOVIES_WITH_SORT_TYPE = 200;
-    public static final int MOVIES_WITH_FAV = 300;
+    //public static final int MOVIES_WITH_FAV = 300;
     public static final int MOVIES_WITH_SORT_TYPE_AND_ID = 400;
     public static final int MOVIES_WITH_FAV_AND_ID = 500;
     public static final int TRAILERS = 600;
-    public static final int TRAILERS_WITH_ID = 700;
+    //public static final int TRAILERS_WITH_ID = 700;
     public static final int REVIEWS = 800;
-    public static final int REVIEWS_WITH_ID = 900;
+    //public static final int REVIEWS_WITH_ID = 900;
 
 //    private static final SQLiteQueryBuilder mTrailerByMovieIdQueryBuilder;
 //    private static final SQLiteQueryBuilder mReviewByMovieIdQueryBuilder;
@@ -65,13 +65,13 @@ public class MoviesProvider extends ContentProvider {
 
         uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_MOVIES, MOVIES);
         uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_MOVIES + "/*", MOVIES_WITH_SORT_TYPE);
-        uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_MOVIES + "/#", MOVIES_WITH_FAV);
+        //uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_MOVIES + "/#", MOVIES_WITH_FAV);
         uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_MOVIES + "/*/#", MOVIES_WITH_SORT_TYPE_AND_ID);
-        uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_MOVIES + "/#/#", MOVIES_WITH_FAV_AND_ID);
+        //uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_MOVIES + "/#/#", MOVIES_WITH_FAV_AND_ID);
         uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_TRAILERS, TRAILERS);
-        uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_TRAILERS + "/#", TRAILERS_WITH_ID);
+        //uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_TRAILERS + "/#", TRAILERS_WITH_ID);
         uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_REVIEWS, REVIEWS);
-        uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_REVIEWS + "/#", REVIEWS_WITH_ID);
+        //uriMatcher.addURI(AUTHORITY, MoviesContract.PATH_REVIEWS + "/#", REVIEWS_WITH_ID);
 
         return uriMatcher;
     }
@@ -84,13 +84,13 @@ public class MoviesProvider extends ContentProvider {
         switch (match) {
             case MOVIES: return MoviesContract.MoviesEntry.CONTENT_DIR_TYPE;
             case MOVIES_WITH_SORT_TYPE: return MoviesContract.MoviesEntry.CONTENT_DIR_TYPE;
-            case MOVIES_WITH_FAV: return MoviesContract.MoviesEntry.CONTENT_DIR_TYPE;
+            //case MOVIES_WITH_FAV: return MoviesContract.MoviesEntry.CONTENT_DIR_TYPE;
             case MOVIES_WITH_SORT_TYPE_AND_ID: return MoviesContract.MoviesEntry.CONTENT_ITEM_TYPE;
-            case MOVIES_WITH_FAV_AND_ID: return MoviesContract.MoviesEntry.CONTENT_ITEM_TYPE;
+            //case MOVIES_WITH_FAV_AND_ID: return MoviesContract.MoviesEntry.CONTENT_ITEM_TYPE;
             case TRAILERS: return MoviesContract.TrailerEntry.CONTENT_DIR_TYPE;
-            case TRAILERS_WITH_ID: return MoviesContract.TrailerEntry.CONTENT_DIR_TYPE;
+            //case TRAILERS_WITH_ID: return MoviesContract.TrailerEntry.CONTENT_DIR_TYPE;
             case REVIEWS: return MoviesContract.ReviewEntry.CONTENT_DIR_TYPE;
-            case REVIEWS_WITH_ID: return MoviesContract.ReviewEntry.CONTENT_DIR_TYPE;
+            //case REVIEWS_WITH_ID: return MoviesContract.ReviewEntry.CONTENT_DIR_TYPE;
             default: throw new UnsupportedOperationException("Uknown Uri: " + uri);
         }
 
@@ -141,22 +141,30 @@ public class MoviesProvider extends ContentProvider {
         SQLiteDatabase db = movieDBHelper.getReadableDatabase();
         Cursor returnedCursor;
         switch (matcher.match(uri)) {
+            case MOVIES:
+                returnedCursor = db.query(MoviesContract.MoviesEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder); break;
             case MOVIES_WITH_SORT_TYPE:
                 String sortType = MoviesContract.MoviesEntry.getSortTypeSettingFromUri(uri);
                 projection = new String[]{MoviesContract.MoviesEntry.COL_MOVIE_ID,
                         MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL};
                 selection = MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING + " = ? ";
                 selectionArgs = new String[]{sortType};
-                returnedCursor = db.query(true, MoviesContract.MoviesEntry.TABLE_NAME,
-                        projection, selection, selectionArgs, null, null, null, "20"); break;
-            case MOVIES_WITH_FAV:
-                String fav = Integer.toString(MoviesContract.MoviesEntry.getIsFavSettingFromUri(uri));
-                projection = new String[]{MoviesContract.MoviesEntry.COL_MOVIE_ID,
-                        MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL};
-                selection = MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " = ? ";
-                selectionArgs = new String[]{fav};
-                returnedCursor = db.query(true, MoviesContract.MoviesEntry.TABLE_NAME,
-                        projection, selection, selectionArgs, null, null, null, null); break;
+                returnedCursor = db.query(MoviesContract.MoviesEntry.TABLE_NAME,
+                        projection, selection, selectionArgs, null, null, null); break;
+//            case MOVIES_WITH_FAV:
+//                String fav = Integer.toString(MoviesContract.MoviesEntry.getIsFavSettingFromUri(uri));
+//                projection = new String[]{MoviesContract.MoviesEntry.COL_MOVIE_ID,
+//                        MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL};
+//                selection = MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " = ? ";
+//                selectionArgs = new String[]{fav};
+//                returnedCursor = db.query(MoviesContract.MoviesEntry.TABLE_NAME,
+//                        projection, selection, selectionArgs, null, null, null); break;
             case MOVIES_WITH_SORT_TYPE_AND_ID:
                 String sortType1 = MoviesContract.MoviesEntry.getSortTypeSettingFromUri(uri);
                 String id = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
@@ -172,41 +180,57 @@ public class MoviesProvider extends ContentProvider {
                 selectionArgs = new String[]{id, sortType1};
                 returnedCursor = db.query(MoviesContract.MoviesEntry.TABLE_NAME,
                         projection, selection, selectionArgs, null, null, null); break;
-            case MOVIES_WITH_FAV_AND_ID:
-                String fav1 = Integer.toString(MoviesContract.MoviesEntry.getIsFavSettingFromUri(uri));
-                String id1 = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
-                projection = new String[]{
-                        MoviesContract.MoviesEntry.COL_MOVIE_TITLE,
-                        MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL,
-                        MoviesContract.MoviesEntry.COL_MOVIE_RELEASE_DATE,
-                        MoviesContract.MoviesEntry.COL_MOVIE_USER_RATING,
-                        MoviesContract.MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS
-                };
-                selection = MoviesContract.MoviesEntry.COL_MOVIE_ID + " = ? AND " +
-                        MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " = ? ";
-                selectionArgs = new String[]{id1, fav1};
-                returnedCursor = db.query(MoviesContract.MoviesEntry.TABLE_NAME,
-                        projection, selection, selectionArgs, null, null, null); break;
-            case TRAILERS_WITH_ID:
-                String id2 = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
-                projection = new String[]{
-                        MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_NAME,
-                        MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL
-                };
-                selection = MoviesContract.TrailerEntry.COL_MOVIE_ID + " = ? ";
-                selectionArgs = new String[]{id2};
+//            case MOVIES_WITH_FAV_AND_ID:
+//                String fav1 = Integer.toString(MoviesContract.MoviesEntry.getIsFavSettingFromUri(uri));
+//                String id1 = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
+//                projection = new String[]{
+//                        MoviesContract.MoviesEntry.COL_MOVIE_TITLE,
+//                        MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL,
+//                        MoviesContract.MoviesEntry.COL_MOVIE_RELEASE_DATE,
+//                        MoviesContract.MoviesEntry.COL_MOVIE_USER_RATING,
+//                        MoviesContract.MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS
+//                };
+//                selection = MoviesContract.MoviesEntry.COL_MOVIE_ID + " = ? AND " +
+//                        MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " = ? ";
+//                selectionArgs = new String[]{id1, fav1};
+//                returnedCursor = db.query(MoviesContract.MoviesEntry.TABLE_NAME,
+//                        projection, selection, selectionArgs, null, null, null); break;
+            case TRAILERS:
                 returnedCursor = db.query(MoviesContract.TrailerEntry.TABLE_NAME,
-                        projection, selection, selectionArgs, null, null, null); break;
-            case REVIEWS_WITH_ID:
-                String id3 = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
-                projection = new String[]{
-                        MoviesContract.ReviewEntry.COL_MOVIE_REVIEW_AUTHOR,
-                        MoviesContract.ReviewEntry.COL_MOVIE_REVIEW
-                };
-                selection = MoviesContract.ReviewEntry.COL_MOVIE_ID + " = ? ";
-                selectionArgs = new String[]{id3};
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder); break;
+//            case TRAILERS_WITH_ID:
+//                String id2 = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
+//                projection = new String[]{
+//                        MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_NAME,
+//                        MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL
+//                };
+//                selection = MoviesContract.TrailerEntry.COL_MOVIE_ID + " = ? ";
+//                selectionArgs = new String[]{id2};
+//                returnedCursor = db.query(MoviesContract.TrailerEntry.TABLE_NAME,
+//                        projection, selection, selectionArgs, null, null, null); break;
+            case REVIEWS:
                 returnedCursor = db.query(MoviesContract.ReviewEntry.TABLE_NAME,
-                        projection, selection, selectionArgs, null, null, null); break;
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder); break;
+//            case REVIEWS_WITH_ID:
+//                String id3 = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
+//                projection = new String[]{
+//                        MoviesContract.ReviewEntry.COL_MOVIE_REVIEW_AUTHOR,
+//                        MoviesContract.ReviewEntry.COL_MOVIE_REVIEW
+//                };
+//                selection = MoviesContract.ReviewEntry.COL_MOVIE_ID + " = ? ";
+//                selectionArgs = new String[]{id3};
+//                returnedCursor = db.query(MoviesContract.ReviewEntry.TABLE_NAME,
+//                        projection, selection, selectionArgs, null, null, null); break;
             default: throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }
         returnedCursor.setNotificationUri(getContext().getContentResolver(), uri);

@@ -65,6 +65,7 @@ public class MovieDetailActivityFragment extends Fragment {
         movieTrailersRecyclerView.setLayoutManager(trailerManager);
 
         //set the data to the views
+        //int id = item.getMovieId();
         Picasso.with(getContext()).load(item.getImage()).into(moviePosterImageView);
         movieTitleTextView.setText(item.getTitle());
         movieReleaseDateTextView.setText(item.getReleaseDate());
