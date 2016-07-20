@@ -37,6 +37,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.radindustries.radman.catchamovie.MainActivity" />
         </activity>
+
+        <provider
+            android:name=".database.MoviesProvider"
+            android:authorities="com.radindustries.radman.catchamovie.database"
+            android:enabled="true"
+            android:exported="false"></provider>
     </application>
 
 </manifest>
