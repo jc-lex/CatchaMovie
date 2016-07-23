@@ -4,12 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by radman on 7/16/16.
  */
 public class MovieDBHelper extends SQLiteOpenHelper {
 
+    public static final String LOG_TAG = MovieDBHelper.class.getSimpleName();
     public static final String DATABASE_NAME = "movie_database.db";
     public static final int DATABASE_VERSION = 2;
     Context context;
@@ -17,6 +19,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     public MovieDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
+        Log.d(LOG_TAG, "Info: DBHelper created");
     }
 
     @Override
@@ -60,6 +63,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
             db.execSQL(CREATE_MOVIE_TABLE);
             db.execSQL(CREATE_TRAILER_TABLE);
             db.execSQL(CREATE_REVIEWS_TABLE);
+            Log.d(LOG_TAG, "Info: DB tables created");
         } catch (SQLiteException e) {
             e.printStackTrace();
         }
@@ -71,5 +75,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.TrailerEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.ReviewEntry.TABLE_NAME);
         onCreate(db);
+        Log.d(LOG_TAG, "Info: DB tables upgraded");
+
     }
 }

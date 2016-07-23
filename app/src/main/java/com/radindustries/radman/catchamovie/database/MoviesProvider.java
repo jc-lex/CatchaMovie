@@ -18,7 +18,7 @@ public class MoviesProvider extends ContentProvider {
     public static final int MOVIES_WITH_SORT_TYPE = 200;
     //public static final int MOVIES_WITH_FAV = 300;
     public static final int MOVIES_WITH_SORT_TYPE_AND_ID = 400;
-    public static final int MOVIES_WITH_FAV_AND_ID = 500;
+    //public static final int MOVIES_WITH_FAV_AND_ID = 500;
     public static final int TRAILERS = 600;
     //public static final int TRAILERS_WITH_ID = 700;
     public static final int REVIEWS = 800;
@@ -54,8 +54,35 @@ public class MoviesProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+
+        final SQLiteDatabase db = movieDBHelper.getWritableDatabase();
+        final int match = matcher.match(uri);
+        int rowsDeleted;
+
+        switch (match) {
+            case MOVIES:
+                rowsDeleted = db.delete(
+                        MoviesContract.MoviesEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                ); break;
+            case TRAILERS:
+                rowsDeleted = db.delete(
+                        MoviesContract.TrailerEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                ); break;
+            case REVIEWS:
+                rowsDeleted = db.delete(
+                        MoviesContract.ReviewEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                ); break;
+            default: throw new UnsupportedOperationException("Unknown Uri: " + uri);
+        }
+        if (rowsDeleted != 0) getContext().getContentResolver().notifyChange(uri, null);
+        return rowsDeleted;
+
     }
 
     public static UriMatcher buildUriMatcher() {
@@ -247,19 +274,19 @@ public class MoviesProvider extends ContentProvider {
         int rowsUpdated;
         switch (match) {
             case MOVIES_WITH_SORT_TYPE_AND_ID:
-                values.put(MoviesContract.MoviesEntry.COL_IS_FAVOURITE, 1);
+                //values.put(MoviesContract.MoviesEntry.COL_IS_FAVOURITE, 1);
                 String id = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
                 selection = MoviesContract.MoviesEntry.COL_MOVIE_ID + " = ? ";
                 selectionArgs = new String[]{id};
                 rowsUpdated = db.update(MoviesContract.MoviesEntry.TABLE_NAME,
                         values, selection, selectionArgs); break;
-            case MOVIES_WITH_FAV_AND_ID:
-                values.put(MoviesContract.MoviesEntry.COL_IS_FAVOURITE, 0);
-                String id1 = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
-                selection = MoviesContract.MoviesEntry.COL_MOVIE_ID + " = ? ";
-                selectionArgs = new String[]{id1};
-                rowsUpdated = db.update(MoviesContract.MoviesEntry.TABLE_NAME,
-                        values, selection, selectionArgs); break;
+//            case MOVIES_WITH_FAV_AND_ID:
+//                values.put(MoviesContract.MoviesEntry.COL_IS_FAVOURITE, 0);
+//                String id1 = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
+//                selection = MoviesContract.MoviesEntry.COL_MOVIE_ID + " = ? ";
+//                selectionArgs = new String[]{id1};
+//                rowsUpdated = db.update(MoviesContract.MoviesEntry.TABLE_NAME,
+//                        values, selection, selectionArgs); break;
             default: throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }
         if (rowsUpdated != 0) {
@@ -320,4 +347,5 @@ public class MoviesProvider extends ContentProvider {
         return returnCount;
 
     }
+
 }
