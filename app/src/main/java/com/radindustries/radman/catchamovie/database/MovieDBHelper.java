@@ -78,4 +78,5 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         Log.d(LOG_TAG, "Info: DB tables upgraded");
 
     }
+
 }

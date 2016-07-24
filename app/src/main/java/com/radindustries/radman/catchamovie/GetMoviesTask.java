@@ -1,5 +1,6 @@
 package com.radindustries.radman.catchamovie;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -7,9 +8,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.radindustries.radman.catchamovie.adapters.MoviesAdapter;
+import com.radindustries.radman.catchamovie.database.MoviesContract;
 import com.radindustries.radman.catchamovie.datamodels.GridItem;
-import com.radindustries.radman.catchamovie.datamodels.Review;
-import com.radindustries.radman.catchamovie.datamodels.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by radman on 7/6/16.
@@ -123,7 +124,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
         //parse the data out
         try{
-            getMoviePosterData(movieJsonStr);
+            getMovieData(movieJsonStr, movieQuery);
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -142,7 +143,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
     }
 
-    private void getMoviePosterData(String movieJsonStr) throws JSONException {
+    private void getMovieData(String movieJsonStr, String movieQuery) throws JSONException {
 
         final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w342";
         final String MOVIE_REVIEW_AND_TRAILER_URL = "http://api.themoviedb.org/3/movie";
@@ -181,13 +182,15 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
             String releaseDateStr;
             String trailersStr;
             String reviewStr;
-            ArrayList<Review> reviews;
-            ArrayList<Trailer> trailers;
+            Vector<ContentValues> reviewsVector;
+            Vector<ContentValues> trailersVector;
             JSONObject movie;
+            Vector<ContentValues> moviesVector = new Vector<>(movies.length());
 
             for (int i = 0; i < movies.length(); i++) {
 
                 movie = movies.getJSONObject(i);
+                //Vector<ContentValues> reviewsVector = new Vector<>();
 
                 //extract data
                 titleStr = movie.getString(MDB_TITLE);
@@ -248,8 +251,10 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 //Log.v(LOG_TAG, titleStr +"\'s Reviews String: " + reviewStr);
                 inputStream.close();
 
-                reviews = getReviews(MDB_RESULTS, reviewStr, MDB_REVIEWS, MDB_REVIEW_AUTHOR);
-                trailers = getTrailers(MDB_RESULTS, trailersStr, MDB_TRAILER_YOUTUBE_KEY, MDB_TRAILER_YOUTUBE_NAME);
+                reviewsVector = getReviews(MDB_RESULTS, reviewStr,
+                        MDB_REVIEWS, MDB_REVIEW_AUTHOR, id);
+                trailersVector = getTrailers(MDB_RESULTS, trailersStr,
+                        MDB_TRAILER_YOUTUBE_KEY, MDB_TRAILER_YOUTUBE_NAME, id);
 
                 //give the data to the grid item
                 item = new GridItem();
@@ -262,17 +267,58 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
                 String posterPath = posterUri.toString();
 
+                ContentValues cv = new ContentValues();
+                cv.put(MoviesContract.MoviesEntry.COL_MOVIE_ID, id);
+                cv.put(MoviesContract.MoviesEntry.COL_MOVIE_TITLE, titleStr);
+                cv.put(MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL, posterPath);
+                cv.put(MoviesContract.MoviesEntry.COL_MOVIE_RELEASE_DATE, releaseDateStr);
+                cv.put(MoviesContract.MoviesEntry.COL_MOVIE_USER_RATING, voteAvgStr);
+                cv.put(MoviesContract.MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS, overviewStr);
+                cv.put(MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING, movieQuery);
+
+                moviesVector.add(cv);
+
+                if (reviewsVector.size() >= 0) {
+                    ContentValues[] cvs = new ContentValues[reviewsVector.size()];
+                    reviewsVector.copyInto(cvs);
+                    int reviewsInserted = context.getContentResolver().bulkInsert(
+                            MoviesContract.ReviewEntry.CONTENT_URI, cvs
+                    );
+                    Log.d(LOG_TAG, reviewsInserted + " reviews inserted into " +
+                            "reviews table for " + titleStr);
+                }
+                if (trailersVector.size() >= 0) {
+                    ContentValues[] cvs = new ContentValues[trailersVector.size()];
+                    trailersVector.copyInto(cvs);
+                    int trailersInserted = context.getContentResolver().bulkInsert(
+                            MoviesContract.TrailerEntry.CONTENT_URI,
+                            cvs
+                    );
+                    Log.d(LOG_TAG, trailersInserted + " trialers inserted into " +
+                            "trialers table for " + titleStr);
+                }
+
                 item.setImage(posterPath);
                 item.setTitle(titleStr);
                 item.setReleaseDate(releaseDateStr);
                 item.setUserRating(voteAvgStr);
                 item.setPlotSynopsis(overviewStr);
                 item.setMovieId(id);
-                item.setReviewArrayList(reviews);
-                item.setTrailerArrayList(trailers);
+                //item.setReviewArrayList(reviews);
+                //item.setTrailerArrayList(trailers);
 
                 mGridData.add(item);
             }
+
+            if (moviesVector.size() > 0) {
+                ContentValues[] contentValues = new ContentValues[moviesVector.size()];
+                moviesVector.copyInto(contentValues);
+                int moviesInserted = context.getContentResolver().bulkInsert(
+                        MoviesContract.MoviesEntry.CONTENT_URI, contentValues
+                );
+                Log.d(LOG_TAG, moviesInserted + " movies inserted into movies table");
+            }
+
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -324,17 +370,22 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         return correctStr.toString();
     }
 
-    private ArrayList<Review> getReviews(String resultsKey, String JSONReviewString,
-                                String content, String author) throws JSONException {
+    private Vector<ContentValues> getReviews(String resultsKey, String JSONReviewString,
+                                String content, String author, int id) throws JSONException {
         JSONObject reviews = new JSONObject(JSONReviewString);
         JSONArray results = reviews.getJSONArray(resultsKey);
-        ArrayList<Review> reviewArray = new ArrayList<>(results.length());
+        Vector<ContentValues> reviewVector = new Vector<>(results.length());
         //numOfMoviesReviewed++;
         try{
             JSONObject review;
             for (int i = 0; i < results.length(); i++) {
                 review = results.getJSONObject(i);
-                reviewArray.add(new Review(review.getString(content), review.getString(author)));
+                ContentValues cv = new ContentValues();
+                cv.put(MoviesContract.ReviewEntry.COL_MOVIE_ID, id);
+                cv.put(MoviesContract.ReviewEntry.COL_MOVIE_REVIEW_AUTHOR, review.getString(author));
+                cv.put(MoviesContract.ReviewEntry.COL_MOVIE_REVIEW, review.getString(content));
+                reviewVector.add(cv);
+//                reviewArray.add(new Review(review.getString(content), review.getString(author)));
 //                Log.d(LOG_TAG, "review" +(i+1) +" of movie"
 //                        + numOfMoviesReviewed + " is: " + reviewArray[i]);
             }
@@ -342,22 +393,29 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return reviewArray;
+        return reviewVector;
     }
 
-    private ArrayList<Trailer> getTrailers(String resultsKey, String JSONTrailersString, String key, String title)
+    private Vector<ContentValues> getTrailers(String resultsKey, String JSONTrailersString,
+                                           String key, String title, int id)
         throws JSONException {
         JSONObject trailers = new JSONObject(JSONTrailersString);
         JSONArray results = trailers.getJSONArray(resultsKey);
-        ArrayList<Trailer> trailersArray = new ArrayList<>(results.length());
+        Vector<ContentValues> trailersVector = new Vector<>(results.length());
         final String YT_BASE_URL = "https://www.youtube.com/watch";
         //numOfMoviesTrailered++;
         try {
             JSONObject keyObj;
             for (int i = 0; i < results.length(); i++) {
                 keyObj = results.getJSONObject(i);
-                trailersArray.add(new Trailer(keyObj.getString(title), Uri.parse(YT_BASE_URL).buildUpon()
-                        .appendQueryParameter("v", keyObj.getString(key)).build().toString()));
+                ContentValues cv = new ContentValues();
+                cv.put(MoviesContract.TrailerEntry.COL_MOVIE_ID, id);
+                cv.put(MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_NAME, keyObj.getString(title));
+                cv.put(MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL, Uri.parse(YT_BASE_URL).buildUpon()
+                        .appendQueryParameter("v", keyObj.getString(key)).build().toString());
+                trailersVector.add(cv);
+//                trailersArray.add(new Trailer(keyObj.getString(title), Uri.parse(YT_BASE_URL).buildUpon()
+//                        .appendQueryParameter("v", keyObj.getString(key)).build().toString()));
 //                Log.d(LOG_TAG, "trailer" +(i+1) +" of movie"
 //                        + numOfMoviesTrailered + " is: " + trailersArray.get(i).getUrl());
             }
@@ -365,7 +423,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return trailersArray;
+        return trailersVector;
     }
 
 

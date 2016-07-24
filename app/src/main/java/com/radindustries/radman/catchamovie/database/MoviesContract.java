@@ -50,22 +50,22 @@ public class MoviesContract {
             return CONTENT_URI.buildUpon().appendPath(sortType).build();
         }
 
-        public static Uri buildMovieUriWithIsFavSetting(int fav) {
-            return CONTENT_URI.buildUpon().appendPath(Integer.toString(fav)).build();
-        }
-
-        public static Uri buildMovieUriWithIsFavSettingAndId(int fav, int id) {
-            return CONTENT_URI.buildUpon().appendPath(Integer.toString(fav))
-                    .appendPath(Integer.toString(id)).build();
-        }
+//        public static Uri buildMovieUriWithIsFavSetting(int fav) {
+//            return CONTENT_URI.buildUpon().appendPath(Integer.toString(fav)).build();
+//        }
+//
+//        public static Uri buildMovieUriWithIsFavSettingAndId(int fav, int id) {
+//            return CONTENT_URI.buildUpon().appendPath(Integer.toString(fav))
+//                    .appendPath(Integer.toString(id)).build();
+//        }
 
         public static String getSortTypeSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
 
-        public static int getIsFavSettingFromUri(Uri uri) {
-            return Integer.parseInt(uri.getPathSegments().get(1));
-        }
+//        public static int getIsFavSettingFromUri(Uri uri) {
+//            return Integer.parseInt(uri.getPathSegments().get(1));
+//        }
 
         public static int getMovieIdFromUri(Uri uri) {
             return Integer.parseInt(uri.getPathSegments().get(2));
@@ -92,9 +92,9 @@ public class MoviesContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildTrailerUriWithId(int id) {
-            return CONTENT_URI.buildUpon().appendPath(Integer.toString(id)).build();
-        }
+//        public static Uri buildTrailerUriWithId(int id) {
+//            return CONTENT_URI.buildUpon().appendPath(Integer.toString(id)).build();
+//        }
 
     }
 
@@ -117,9 +117,9 @@ public class MoviesContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buidReviewUriWithId(int id) {
-            return CONTENT_URI.buildUpon().appendPath(Integer.toString(id)).build();
-        }
+//        public static Uri buidReviewUriWithId(int id) {
+//            return CONTENT_URI.buildUpon().appendPath(Integer.toString(id)).build();
+//        }
 
     }
 
