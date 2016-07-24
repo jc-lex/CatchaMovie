@@ -24,10 +24,9 @@ import java.util.ArrayList;
  */
 public class MoviesFragment extends Fragment {
 
-    private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
+    //private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
     private static MoviesAdapter moviesAdapter;
     private static ArrayList<GridItem> mGridData;
-    private GridView mGridView;
 
     public MoviesFragment() {}
 
@@ -57,7 +56,7 @@ public class MoviesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         //create the GridView, the ArrayList of data, and the ArrayAdapter to the GridView
-        mGridView = (GridView) rootView.findViewById(R.id.griditem_movies);
+        GridView mGridView = (GridView) rootView.findViewById(R.id.griditem_movies);
         mGridData = new ArrayList<>();
         moviesAdapter = new MoviesAdapter(getContext(), R.layout.grid_item_movie_posters, mGridData);
         mGridView.setAdapter(moviesAdapter);
