@@ -17,13 +17,16 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     Context context;
 
     public MovieDBHelper(Context context) {
+
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
         Log.d(LOG_TAG, "Info: DBHelper created");
+
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         final String CREATE_MOVIE_TABLE =
                 "CREATE TABLE " + MoviesContract.MoviesEntry.TABLE_NAME + " (" +
                 MoviesContract.MoviesEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -67,10 +70,12 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         } catch (SQLiteException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.MoviesEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.TrailerEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.ReviewEntry.TABLE_NAME);

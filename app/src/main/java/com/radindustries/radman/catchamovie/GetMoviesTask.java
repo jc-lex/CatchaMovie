@@ -10,6 +10,8 @@ import android.widget.Toast;
 import com.radindustries.radman.catchamovie.adapters.MoviesAdapter;
 import com.radindustries.radman.catchamovie.database.MoviesContract;
 import com.radindustries.radman.catchamovie.datamodels.GridItem;
+import com.radindustries.radman.catchamovie.datamodels.Review;
+import com.radindustries.radman.catchamovie.datamodels.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -304,8 +306,8 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 item.setUserRating(voteAvgStr);
                 item.setPlotSynopsis(overviewStr);
                 item.setMovieId(id);
-                //item.setReviewArrayList(reviews);
-                //item.setTrailerArrayList(trailers);
+                item.setReviewArrayList(new ArrayList<Review>());
+                item.setTrailerArrayList(new ArrayList<Trailer>());
 
                 mGridData.add(item);
             }
@@ -425,6 +427,5 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         }
         return trailersVector;
     }
-
 
 }
