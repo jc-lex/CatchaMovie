@@ -70,5 +70,6 @@
     <string name="movie_reviews_title">Movie Reviews:</string>
     <string name="fav_button_text">Mark As\n Favourite</string>
     <string name="movie_trailers_title_text">Movie Trailers</string>
+    <string name="action_get_fav">Favourites</string>
 
 </resources>

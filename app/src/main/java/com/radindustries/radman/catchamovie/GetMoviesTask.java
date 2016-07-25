@@ -7,11 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.radindustries.radman.catchamovie.adapters.MoviesAdapter;
 import com.radindustries.radman.catchamovie.database.MoviesContract;
-import com.radindustries.radman.catchamovie.datamodels.GridItem;
-import com.radindustries.radman.catchamovie.datamodels.Review;
-import com.radindustries.radman.catchamovie.datamodels.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +20,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -34,17 +29,12 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
     private static final String LOG_TAG = GetMoviesTask.class.getSimpleName();
     private Context context;
-    private ArrayList<GridItem> mGridData;
-    private MoviesAdapter moviesAdapter;
     private static String apiKey = "b27bf3ea7724c708e10e78138ef74f26";
     //private static int numOfMoviesReviewed = 0;
     //private static int numOfMoviesTrailered = 0;
 
-    public GetMoviesTask(Context context, MoviesAdapter moviesAdapter,
-                         ArrayList<GridItem> gridItems) {
+    public GetMoviesTask(Context context) {
         this.context = context;
-        this.moviesAdapter = moviesAdapter;
-        this.mGridData = gridItems;
     }
 
     @Override
@@ -137,12 +127,9 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
 
     @Override
     protected void onPostExecute(Integer result) {
-        if (result == 1) {
-            moviesAdapter.setGridData(mGridData);
-        } else {
+        if (result != 1) {
             Toast.makeText(context, "Failed to get data", Toast.LENGTH_LONG).show();
         }
-
     }
 
     private void getMovieData(String movieJsonStr, String movieQuery) throws JSONException {
@@ -172,7 +159,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         try{
             JSONObject movielist = new JSONObject(movieJsonStr);
             JSONArray movies = movielist.getJSONArray(MDB_RESULTS);
-            GridItem item;
+            //GridItem item;
 
             //initialise variables
             int id;
@@ -258,7 +245,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                         MDB_TRAILER_YOUTUBE_KEY, MDB_TRAILER_YOUTUBE_NAME, id);
 
                 //give the data to the grid item
-                item = new GridItem();
+                //item = new GridItem();
 
                 posterProperPathStr = correctPosterPath(posterRawPathStr);
 
@@ -299,16 +286,16 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                             "trialers table for " + titleStr);
                 }
 
-                item.setImage(posterPath);
-                item.setTitle(titleStr);
-                item.setReleaseDate(releaseDateStr);
-                item.setUserRating(voteAvgStr);
-                item.setPlotSynopsis(overviewStr);
-                item.setMovieId(id);
-                item.setReviewArrayList(new ArrayList<Review>());
-                item.setTrailerArrayList(new ArrayList<Trailer>());
-
-                mGridData.add(item);
+//                item.setImage(posterPath);
+//                item.setTitle(titleStr);
+//                item.setReleaseDate(releaseDateStr);
+//                item.setUserRating(voteAvgStr);
+//                item.setPlotSynopsis(overviewStr);
+//                item.setMovieId(id);
+//                item.setReviewArrayList(new ArrayList<Review>());
+//                item.setTrailerArrayList(new ArrayList<Trailer>());
+//
+//                mGridData.add(item);
             }
 
             if (moviesVector.size() > 0) {

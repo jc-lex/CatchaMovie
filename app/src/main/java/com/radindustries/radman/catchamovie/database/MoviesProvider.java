@@ -178,7 +178,8 @@ public class MoviesProvider extends ContentProvider {
                         sortOrder); break;
             case MOVIES_WITH_SORT_TYPE:
                 String sortType = MoviesContract.MoviesEntry.getSortTypeSettingFromUri(uri);
-                projection = new String[]{MoviesContract.MoviesEntry.COL_MOVIE_ID,
+                projection = new String[]{ MoviesContract.MoviesEntry._ID,
+                        MoviesContract.MoviesEntry.COL_MOVIE_ID,
                         MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL};
                 selection = MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING + " = ? ";
                 selectionArgs = new String[]{sortType};

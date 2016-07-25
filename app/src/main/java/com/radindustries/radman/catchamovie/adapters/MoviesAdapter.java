@@ -1,61 +1,50 @@
 package com.radindustries.radman.catchamovie.adapters;
 
-import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
-import com.radindustries.radman.catchamovie.datamodels.GridItem;
 import com.radindustries.radman.catchamovie.R;
+import com.radindustries.radman.catchamovie.database.MoviesContract;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 /**
  * Created by radman on 7/5/16.
  */
-public class MoviesAdapter extends ArrayAdapter<GridItem> {
+public class MoviesAdapter extends CursorAdapter {
 
-    private Context context;
-    private int layoutResourceId;
-    private ArrayList<GridItem> mGridData = new ArrayList<>();
-
-    public MoviesAdapter(Context context, int layoutResourceId, ArrayList<GridItem> mGridData) {
-        super(context, layoutResourceId, mGridData);
-        this.context = context;
-        this.layoutResourceId = layoutResourceId;
-        this.mGridData = mGridData;
+    public MoviesAdapter(Context context, Cursor cursor, int flags) {
+        super(context, cursor, flags);
     }
 
     static class ViewHolder {
-        ImageView imageView;
+        public ImageView imageView;
+
+        public ViewHolder(View view) {
+            imageView = (ImageView) view.findViewById(R.id.grid_item_movie_posters_imageview);
+        }
+
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        ViewHolder holder;
-
-        if (row == null) { //if the view has no data, inflate it and set its resource
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
-            holder = new ViewHolder();
-            holder.imageView = (ImageView) row.findViewById(R.id.grid_item_movie_posters_imageview);
-            row.setTag(holder);
-        } else { //if the view has data,
-            holder = (ViewHolder) row.getTag();
-        }
-
-        GridItem item = mGridData.get(position);
-        Picasso.with(context).load(item.getImage()).into(holder.imageView);
-        return row;
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        View view = LayoutInflater.from(context)
+                .inflate(R.layout.grid_item_movie_posters, parent, false);
+        ViewHolder holder = new ViewHolder(view);
+        view.setTag(holder);
+        return view;
     }
 
-    public void setGridData(ArrayList<GridItem> mGridData) {
-        this.mGridData = mGridData;
-        notifyDataSetChanged();
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
+        ViewHolder holder = (ViewHolder) view.getTag();
+        String imageUrl = cursor.getString(cursor.
+                getColumnIndex(MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL));
+        Picasso.with(context).load(imageUrl).into(holder.imageView);
     }
+
 }
