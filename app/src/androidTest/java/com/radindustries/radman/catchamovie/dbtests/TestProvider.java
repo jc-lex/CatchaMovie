@@ -188,7 +188,7 @@ public class TestProvider extends AndroidTestCase {
         );
         assertTrue("Error: no data result set received", cursor.moveToFirst());
         assertTrue(cursor.getCount() == 1);
-        assertTrue(cursor.getColumnCount() == 5);
+        assertTrue(cursor.getColumnCount() == 6);
 
         String title = cursor.getString(cursor
                 .getColumnIndex(MoviesContract.MoviesEntry.COL_MOVIE_TITLE));

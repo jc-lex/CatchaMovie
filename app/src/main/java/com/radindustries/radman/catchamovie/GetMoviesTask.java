@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.radindustries.radman.catchamovie.database.MoviesContract;
 
@@ -30,8 +29,6 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
     private static final String LOG_TAG = GetMoviesTask.class.getSimpleName();
     private Context context;
     private static String apiKey = "b27bf3ea7724c708e10e78138ef74f26";
-    //private static int numOfMoviesReviewed = 0;
-    //private static int numOfMoviesTrailered = 0;
 
     public GetMoviesTask(Context context) {
         this.context = context;
@@ -123,13 +120,6 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
         }
 
         return 1;
-    }
-
-    @Override
-    protected void onPostExecute(Integer result) {
-        if (result != 1) {
-            Toast.makeText(context, "Failed to get data", Toast.LENGTH_LONG).show();
-        }
     }
 
     private void getMovieData(String movieJsonStr, String movieQuery) throws JSONException {

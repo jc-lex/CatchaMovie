@@ -1,5 +1,6 @@
 package com.radindustries.radman.catchamovie.fragments;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,12 +10,16 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.radindustries.radman.catchamovie.GetMoviesTask;
+import com.radindustries.radman.catchamovie.MovieDetailActivity;
 import com.radindustries.radman.catchamovie.R;
 import com.radindustries.radman.catchamovie.adapters.MoviesAdapter;
 import com.radindustries.radman.catchamovie.database.MoviesContract;
@@ -26,7 +31,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     //private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
     private static MoviesAdapter moviesAdapter;
-    //private static ArrayList<GridItem> mGridData;
     private static final int MOVIE_LOADER = 1;
 
     public MoviesFragment() {}
@@ -42,7 +46,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onStart() {
         super.onStart();
-        //updateMovies();
+        updateMovies();
     }
 
     @Override
@@ -52,37 +56,88 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setHasOptionsMenu(true);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_movies_fragment, menu);
+        MenuItem item = menu.findItem(R.id.action_get_fav);
+        if (item.getItemId() == R.id.action_get_fav) {
+            Cursor fav = getContext().getContentResolver().query(
+                    MoviesContract.MoviesEntry.CONTENT_URI,
+                    null,
+                    MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " = ? ",
+                    new String[] {"1"}, null
+            );
+            moviesAdapter.swapCursor(fav);
+        }
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //create the GridView, the ArrayList of data, and the ArrayAdapter to the GridView
+        //create the GridView and the CursorAdapter to the GridView
         GridView mGridView = (GridView) rootView.findViewById(R.id.griditem_movies);
-        //mGridData = new ArrayList<>();
         moviesAdapter = new MoviesAdapter(getContext(), null, 0);
         mGridView.setAdapter(moviesAdapter);
-
-        //execute the AsyncTask
-        //new GetMoviesTask(getContext(), moviesAdapter, mGridData).execute("popular");
 
         //create intent for the MovieDetail activity
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                GridItem item = (GridItem) parent.getItemAtPosition(position);
-//                Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-//                intent.putExtra("Movie", item);
-//                startActivity(intent);
+
+                String sortType = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                        .getString(getString(R.string.pref_movie_sort_type_key),
+                                getString(R.string.pref_movie_sort_type_default));
+                Cursor c = getContext().getContentResolver().query(
+                        MoviesContract.MoviesEntry.CONTENT_URI,
+                        new String[] {
+                                MoviesContract.MoviesEntry._ID,
+                                MoviesContract.MoviesEntry.COL_MOVIE_ID,
+                                MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL,
+                                MoviesContract.MoviesEntry.COL_MOVIE_TITLE,
+                                MoviesContract.MoviesEntry.COL_MOVIE_RELEASE_DATE,
+                                MoviesContract.MoviesEntry.COL_MOVIE_USER_RATING,
+                                MoviesContract.MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS,
+                                MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING
+                        },
+                        MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING + " = ? AND " +
+                        MoviesContract.MoviesEntry._ID + " = ? ",
+                        new String[] {sortType, Long.toString(id)},
+                        null
+                );
+                if (c != null && c.moveToFirst()) {
+                    Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+                    intent.putExtra("Id", c.getInt(c.getColumnIndex(MoviesContract
+                            .MoviesEntry.COL_MOVIE_ID)));
+                    intent.putExtra("Image Url", c.getString(c.getColumnIndex(MoviesContract
+                            .MoviesEntry.COL_MOVIE_POSTER_URL)));
+                    intent.putExtra("Title", c.getString(c.getColumnIndex(MoviesContract
+                            .MoviesEntry.COL_MOVIE_TITLE)));
+                    intent.putExtra("Release Date", c.getString(c.getColumnIndex(MoviesContract
+                            .MoviesEntry.COL_MOVIE_RELEASE_DATE)));
+                    intent.putExtra("User Rating", c.getString(c.getColumnIndex(MoviesContract
+                            .MoviesEntry.COL_MOVIE_USER_RATING)));
+                    intent.putExtra("Plot", c.getString(c.getColumnIndex(MoviesContract
+                            .MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS)));
+                    intent.putExtra("Sort Type", c.getString(c.getColumnIndex(MoviesContract
+                            .MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING)));
+                    startActivity(intent);
+                    c.close();
+                }
             }
         });
 
         return rootView;
+
     }
 
     @Override
@@ -93,7 +148,8 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         return new CursorLoader(
                 getContext(),
                 MoviesContract.MoviesEntry.buildMovieUriWithSortType(sortType),
-                null, null, null, null
+                null, null, null,
+                MoviesContract.MoviesEntry._ID + " ASC"
         );
     }
 
@@ -106,4 +162,5 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoaderReset(Loader<Cursor> loader) {
         moviesAdapter.swapCursor(null);
     }
+
 }

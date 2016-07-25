@@ -197,6 +197,7 @@ public class MoviesProvider extends ContentProvider {
                 String sortType1 = MoviesContract.MoviesEntry.getSortTypeSettingFromUri(uri);
                 String id = Integer.toString(MoviesContract.MoviesEntry.getMovieIdFromUri(uri));
                 projection = new String[]{
+                        MoviesContract.MoviesEntry._ID,
                         MoviesContract.MoviesEntry.COL_MOVIE_TITLE,
                         MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL,
                         MoviesContract.MoviesEntry.COL_MOVIE_RELEASE_DATE,

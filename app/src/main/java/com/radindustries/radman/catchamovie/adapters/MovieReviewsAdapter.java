@@ -1,5 +1,6 @@
 package com.radindustries.radman.catchamovie.adapters;
 
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,21 +9,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.radindustries.radman.catchamovie.R;
-import com.radindustries.radman.catchamovie.datamodels.Review;
-
-import java.util.List;
+import com.radindustries.radman.catchamovie.database.MoviesContract;
 
 /**
  * Created by radman on 7/11/16.
  */
-public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapter.MovieReviewViewHolder> {
+public class MovieReviewsAdapter extends
+        RecyclerViewCursorAdapter<MovieReviewsAdapter.MovieReviewViewHolder> {
 
-    private List<Review> mReviewData;
-
-    public MovieReviewsAdapter(List<Review> objects) {
-        this.mReviewData = objects;
+    public MovieReviewsAdapter(Cursor cursor) {
+        super(cursor);
     }
-
 
     @Override
     public MovieReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -32,14 +29,15 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
     }
 
     @Override
-    public void onBindViewHolder(MovieReviewViewHolder holder, int position) {
-        holder.reviewAuthor.setText(mReviewData.get(position).getAuthor());
-        holder.reviewStr.setText(mReviewData.get(position).getReviewStr());
-    }
+    protected void onBindViewHolder(MovieReviewViewHolder holder, Cursor cursor) {
 
-    @Override
-    public int getItemCount() {
-        return mReviewData.size();
+        String author = cursor.getString(cursor
+                .getColumnIndex(MoviesContract.ReviewEntry.COL_MOVIE_REVIEW_AUTHOR));
+        String review = cursor.getString(cursor
+                .getColumnIndex(MoviesContract.ReviewEntry.COL_MOVIE_REVIEW));
+        holder.reviewAuthor.setText(author);
+        holder.reviewStr.setText(review);
+
     }
 
     public static class MovieReviewViewHolder extends RecyclerView.ViewHolder {
@@ -49,10 +47,14 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
         LinearLayout movieReviewItem;
 
         public MovieReviewViewHolder(View itemView) {
+
             super(itemView);
             reviewAuthor = (TextView) itemView.findViewById(R.id.recyclerview_item_review_author_textview);
             reviewStr = (TextView) itemView.findViewById(R.id.recyclerview_item_review_textview);
             movieReviewItem = (LinearLayout) itemView.findViewById(R.id.movie_review_item);
+
         }
+
     }
+
 }

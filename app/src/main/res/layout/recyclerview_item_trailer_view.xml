@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_horizontal"
@@ -10,29 +10,20 @@
     android:id="@+id/movie_trailer_item">
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:scaleType="centerCrop"
         android:src="@drawable/youtube_512"
         android:id="@+id/movie_trailer_yt_image"/>
 
     <TextView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:textColor="@color/colorWhite"
-        android:textSize="17sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         android:id="@+id/recyclerview_item_trailer_title_textview"
-        android:layout_gravity="center_horizontal"
-        android:paddingLeft="16dp" />
-
-        <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textColor="@color/colorWhite"-->
-            <!--android:textSize="12sp"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:id="@+id/recyclerview_item_trailer_url_textview"/>-->
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
