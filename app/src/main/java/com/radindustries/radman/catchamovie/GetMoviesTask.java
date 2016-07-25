@@ -192,7 +192,6 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
             for (int i = 0; i < movies.length(); i++) {
 
                 movie = movies.getJSONObject(i);
-                //Vector<ContentValues> reviewsVector = new Vector<>();
 
                 //extract data
                 titleStr = movie.getString(MDB_TITLE);
@@ -320,6 +319,33 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
                 );
                 Log.d(LOG_TAG, moviesInserted + " movies inserted into movies table");
             }
+//            Cursor creviews = context.getContentResolver().query(
+//                    MoviesContract.ReviewEntry.CONTENT_URI,
+//                    null, null, null, null
+//            );
+//            if (creviews != null) {
+//                Log.d(LOG_TAG, "There are " + creviews.getCount() + " reviews in the db");
+//            }
+//            Cursor ctrailers = context.getContentResolver().query(
+//                    MoviesContract.TrailerEntry.CONTENT_URI,
+//                    null, null, null, null
+//            );
+//            if (ctrailers != null) {
+//                Log.d(LOG_TAG, "There are " + ctrailers.getCount() + " trailers in the db");
+//            }
+//            Cursor c = context.getContentResolver().query(
+//                    MoviesContract.MoviesEntry.CONTENT_URI,
+//                    null, null, null, null
+//            );
+//            if (c != null) {
+//                Log.d(LOG_TAG, "There are " + c.getCount() + " movies in the db");
+//            }
+//
+//            if (ctrailers != null && creviews != null && c != null) {
+//                creviews.close();
+//                ctrailers.close();
+//                c.close();
+//            }
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
