@@ -76,41 +76,80 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 String sortType = PreferenceManager.getDefaultSharedPreferences(getActivity())
                         .getString(getString(R.string.pref_movie_sort_type_key),
                                 getString(R.string.pref_movie_sort_type_default));
-                Cursor c = getContext().getContentResolver().query(
-                        MoviesContract.MoviesEntry.CONTENT_URI,
-                        new String[] {
-                                MoviesContract.MoviesEntry._ID,
-                                MoviesContract.MoviesEntry.COL_MOVIE_ID,
-                                MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL,
-                                MoviesContract.MoviesEntry.COL_MOVIE_TITLE,
-                                MoviesContract.MoviesEntry.COL_MOVIE_RELEASE_DATE,
-                                MoviesContract.MoviesEntry.COL_MOVIE_USER_RATING,
-                                MoviesContract.MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS,
-                                MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING
-                        },
-                        MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING + " = ? AND " +
-                        MoviesContract.MoviesEntry._ID + " = ? ",
-                        new String[] {sortType, Long.toString(id)},
-                        null
-                );
-                if (c != null && c.moveToFirst()) {
-                    Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-                    intent.putExtra("Id", c.getInt(c.getColumnIndex(MoviesContract
-                            .MoviesEntry.COL_MOVIE_ID)));
-                    intent.putExtra("Image Url", c.getString(c.getColumnIndex(MoviesContract
-                            .MoviesEntry.COL_MOVIE_POSTER_URL)));
-                    intent.putExtra("Title", c.getString(c.getColumnIndex(MoviesContract
-                            .MoviesEntry.COL_MOVIE_TITLE)));
-                    intent.putExtra("Release Date", c.getString(c.getColumnIndex(MoviesContract
-                            .MoviesEntry.COL_MOVIE_RELEASE_DATE)));
-                    intent.putExtra("User Rating", c.getString(c.getColumnIndex(MoviesContract
-                            .MoviesEntry.COL_MOVIE_USER_RATING)));
-                    intent.putExtra("Plot", c.getString(c.getColumnIndex(MoviesContract
-                            .MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS)));
-                    intent.putExtra("Sort Type", c.getString(c.getColumnIndex(MoviesContract
-                            .MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING)));
-                    startActivity(intent);
-                    c.close();
+                if (sortType.equals("favourites")) {
+                    Cursor c = getContext().getContentResolver().query(
+                            MoviesContract.MoviesEntry.CONTENT_URI,
+                            new String[] {
+                                    MoviesContract.MoviesEntry._ID,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_ID,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_TITLE,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_RELEASE_DATE,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_USER_RATING,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING
+                            },
+                            MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " = ? AND " +
+                                    MoviesContract.MoviesEntry._ID + " = ? ",
+                            new String[] {Integer.toString(1), Long.toString(id)},
+                            null
+                    );
+                    if (c != null && c.moveToFirst()) {
+                        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+                        intent.putExtra("Id", c.getInt(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_ID)));
+                        intent.putExtra("Image Url", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_POSTER_URL)));
+                        intent.putExtra("Title", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_TITLE)));
+                        intent.putExtra("Release Date", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_RELEASE_DATE)));
+                        intent.putExtra("User Rating", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_USER_RATING)));
+                        intent.putExtra("Plot", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS)));
+                        intent.putExtra("Sort Type", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING)));
+                        startActivity(intent);
+                        c.close();
+                    }
+                } else {
+                    Cursor c = getContext().getContentResolver().query(
+                            MoviesContract.MoviesEntry.CONTENT_URI,
+                            new String[]{
+                                    MoviesContract.MoviesEntry._ID,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_ID,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_POSTER_URL,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_TITLE,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_RELEASE_DATE,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_USER_RATING,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS,
+                                    MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING
+                            },
+                            MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING + " = ? AND " +
+                                    MoviesContract.MoviesEntry._ID + " = ? ",
+                            new String[]{sortType, Long.toString(id)},
+                            null
+                    );
+                    if (c != null && c.moveToFirst()) {
+                        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+                        intent.putExtra("Id", c.getInt(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_ID)));
+                        intent.putExtra("Image Url", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_POSTER_URL)));
+                        intent.putExtra("Title", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_TITLE)));
+                        intent.putExtra("Release Date", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_RELEASE_DATE)));
+                        intent.putExtra("User Rating", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_USER_RATING)));
+                        intent.putExtra("Plot", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_PLOT_SYNOPSIS)));
+                        intent.putExtra("Sort Type", c.getString(c.getColumnIndex(MoviesContract
+                                .MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING)));
+                        startActivity(intent);
+                        c.close();
+                    }
                 }
             }
         });
@@ -124,12 +163,23 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         String sortType = PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .getString(getString(R.string.pref_movie_sort_type_key),
                         getString(R.string.pref_movie_sort_type_default));
-        return new CursorLoader(
-                getContext(),
-                MoviesContract.MoviesEntry.buildMovieUriWithSortType(sortType),
-                null, null, null,
-                MoviesContract.MoviesEntry._ID + " ASC"
-        );
+        if (sortType.equals("favourites")) {
+            return new CursorLoader(
+                    getContext(),
+                    MoviesContract.MoviesEntry.CONTENT_URI,
+                    null,
+                    MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " = ? ",
+                    new String[] {Integer.toString(1)},
+                    MoviesContract.MoviesEntry._ID + " ASC"
+            );
+        } else {
+            return new CursorLoader(
+                    getContext(),
+                    MoviesContract.MoviesEntry.buildMovieUriWithSortType(sortType),
+                    null, null, null,
+                    MoviesContract.MoviesEntry._ID + " ASC"
+            );
+        }
     }
 
     @Override

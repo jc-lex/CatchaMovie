@@ -13,7 +13,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
 
     public static final String LOG_TAG = MovieDBHelper.class.getSimpleName();
     public static final String DATABASE_NAME = "movie_database.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     Context context;
 
     public MovieDBHelper(Context context) {
@@ -39,29 +39,29 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 MoviesContract.MoviesEntry.COL_MOVIE_SORT_TYPE_SETTING + " TEXT NOT NULL, " +
                 MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " INTEGER DEFAULT 0, " +
                         "UNIQUE (" + MoviesContract.MoviesEntry.COL_MOVIE_ID +
-                        ") ON CONFLICT REPLACE" + ");";
+                        ") ON CONFLICT IGNORE" + ");";
         final String CREATE_TRAILER_TABLE =
                 "CREATE TABLE " + MoviesContract.TrailerEntry.TABLE_NAME + " (" +
                 MoviesContract.TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MoviesContract.TrailerEntry.COL_MOVIE_ID + " INTEGER NOT NULL, " +
                 MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_NAME + " TEXT, " +
-                MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL + " TEXT, " +
+                MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL + " TEXT UNIQUE, " +
                 "FOREIGN KEY (" + MoviesContract.TrailerEntry.COL_MOVIE_ID + ") REFERENCES " +
                 MoviesContract.MoviesEntry.TABLE_NAME + "(" +
                         MoviesContract.MoviesEntry.COL_MOVIE_ID + "), " +
                         "UNIQUE (" + MoviesContract.TrailerEntry.COL_MOVIE_TRAILER_URL +
-                        ") ON CONFLICT REPLACE" + ");";
+                        ") ON CONFLICT IGNORE" + ");";
         final String CREATE_REVIEWS_TABLE =
                 "CREATE TABLE " + MoviesContract.ReviewEntry.TABLE_NAME + " (" +
                 MoviesContract.ReviewEntry._ID + " INTEGER PRIMARY KEY NOT NULL, " +
                 MoviesContract.ReviewEntry.COL_MOVIE_ID + " INTEGER NOT NULL, " +
                 MoviesContract.ReviewEntry.COL_MOVIE_REVIEW_AUTHOR + " TEXT, " +
-                MoviesContract.ReviewEntry.COL_MOVIE_REVIEW + " TEXT, " +
+                MoviesContract.ReviewEntry.COL_MOVIE_REVIEW + " TEXT UNIQUE, " +
                 "FOREIGN KEY (" + MoviesContract.ReviewEntry.COL_MOVIE_ID + ") REFERENCES " +
                 MoviesContract.MoviesEntry.TABLE_NAME + "(" +
                         MoviesContract.MoviesEntry.COL_MOVIE_ID + "), " +
                         "UNIQUE (" + MoviesContract.ReviewEntry.COL_MOVIE_REVIEW +
-                        ") ON CONFLICT REPLACE" + ");";
+                        ") ON CONFLICT IGNORE" + ");";
         try {
             db.execSQL(CREATE_MOVIE_TABLE);
             db.execSQL(CREATE_TRAILER_TABLE);

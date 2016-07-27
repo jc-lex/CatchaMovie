@@ -37,7 +37,7 @@ public class GetMoviesTask extends AsyncTask<String, Void, Integer> {
     @Override
     protected Integer doInBackground(String... params) {
 
-        if (params.length == 0) {
+        if (params.length == 0 || params[0].equals("favourites")) {
             return null;
         }
         String movieQuery = params[0];
