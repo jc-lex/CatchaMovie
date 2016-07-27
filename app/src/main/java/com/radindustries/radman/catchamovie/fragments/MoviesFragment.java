@@ -10,9 +10,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -56,27 +53,9 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_movies_fragment, menu);
-        MenuItem item = menu.findItem(R.id.action_get_fav);
-        if (item.getItemId() == R.id.action_get_fav) {
-            Cursor fav = getContext().getContentResolver().query(
-                    MoviesContract.MoviesEntry.CONTENT_URI,
-                    null,
-                    MoviesContract.MoviesEntry.COL_IS_FAVOURITE + " = ? ",
-                    new String[] {"1"}, null
-            );
-            moviesAdapter.swapCursor(fav);
-        }
-
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
     }
 
     @Override
