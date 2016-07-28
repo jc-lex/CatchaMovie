@@ -43,7 +43,8 @@
 
         <provider
             android:name=".database.MoviesProvider"
-            android:authorities="com.radindustries.radman.catchamovie.database"
+            android:authorities="@string/content_authority"
+            android:syncable="true"
             android:enabled="true"
             android:exported="false" />
 
