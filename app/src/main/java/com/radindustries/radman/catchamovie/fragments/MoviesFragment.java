@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.radindustries.radman.catchamovie.GetMoviesTask;
 import com.radindustries.radman.catchamovie.MovieDetailActivity;
 import com.radindustries.radman.catchamovie.R;
 import com.radindustries.radman.catchamovie.adapters.MoviesAdapter;
@@ -32,20 +31,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     public MoviesFragment() {}
 
-    private void updateMovies() {
-        GetMoviesTask getMoviesTask = new GetMoviesTask(getContext());
-        String sortType = PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .getString(getString(R.string.pref_movie_sort_type_key),
-                        getString(R.string.pref_movie_sort_type_default));
-        getMoviesTask.execute(sortType);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateMovies();
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -55,7 +40,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setHasOptionsMenu(true);
     }
 
     @Override

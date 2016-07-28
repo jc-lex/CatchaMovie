@@ -71,5 +71,8 @@
     <string name="fav_button_text">Mark As\n Favourite</string>
     <string name="movie_trailers_title_text">Movie Trailers</string>
     <string name="action_get_fav">Favourites</string>
+    <string name="sync_account_type">catchamovie.radindustries.com</string>
+    <string name="content_authority">com.radindustries.radman.catchamovie.database</string>
+    <string name="sync_title">Sync</string>
 
 </resources>
