@@ -39,6 +39,7 @@ public class MovieDetailActivityFragment extends Fragment
     private static String sortType;
     private MovieTrailersAdapter trailersAdapter;
     private MovieReviewsAdapter reviewsAdapter;
+    public static Uri mSharedTrailerUrl;
 
     public MovieDetailActivityFragment() {}
 
@@ -68,7 +69,13 @@ public class MovieDetailActivityFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        if (loader.getId() == TRAILER_LOADER) trailersAdapter.swapCursor(data);
+        if (loader.getId() == TRAILER_LOADER) {
+            data.moveToFirst();
+            mSharedTrailerUrl = Uri.parse(data.getString(data
+                    .getColumnIndex(MoviesContract.TrailerEntry
+                            .COL_MOVIE_TRAILER_URL))).buildUpon().build();
+            trailersAdapter.swapCursor(data);
+        }
         if (loader.getId() == REVIEW_LOADER) reviewsAdapter.swapCursor(data);
 
     }
@@ -150,7 +157,7 @@ public class MovieDetailActivityFragment extends Fragment
         holder.movieReviewsRecyclerView.setAdapter(reviewsAdapter);
         holder.movieTrailersRecyclerView.setAdapter(trailersAdapter);
 
-        //set click listener to the trailers
+        //set click listener to the trailers recyclerview
         holder.movieTrailersRecyclerView
                 .addOnItemTouchListener(
                         new RecyclerItemClickListener(getContext(),
@@ -190,7 +197,7 @@ public class MovieDetailActivityFragment extends Fragment
             public void onLongItemClick(View view, int position) {}
         }));
 
-        //set listener for the favourite button
+        //set click listener for the favourite button
         holder.favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,21 +205,27 @@ public class MovieDetailActivityFragment extends Fragment
                     ContentValues cv = new ContentValues();
                     cv.put(MoviesContract.MoviesEntry.COL_IS_FAVOURITE, 0);
                     int favouriting = getContext().getContentResolver().update(
-                            MoviesContract.MoviesEntry.buildMovieUriWithSortTypeAndId(sortType, movie_id),
+                            MoviesContract.MoviesEntry
+                                    .buildMovieUriWithSortTypeAndId(sortType, movie_id),
                             cv, null, null
                     );
                     if (favouriting == 1) {
-                        Toast.makeText(getContext(), "Removed from Favourites", Toast.LENGTH_LONG).show();
+                        //holder.favButton.setText(R.string.is_not_fav_button_text);
+                        Toast.makeText(getContext(), "Removed from Favourites",
+                                Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     ContentValues cv = new ContentValues();
                     cv.put(MoviesContract.MoviesEntry.COL_IS_FAVOURITE, 1);
                     int favouriting = getContext().getContentResolver().update(
-                            MoviesContract.MoviesEntry.buildMovieUriWithSortTypeAndId(sortType, movie_id),
+                            MoviesContract.MoviesEntry
+                                    .buildMovieUriWithSortTypeAndId(sortType, movie_id),
                             cv, null, null
                     );
                     if (favouriting == 1) {
-                        Toast.makeText(getContext(), "Added to Favourites", Toast.LENGTH_LONG).show();
+                        //holder.favButton.setText(R.string.is_fav_button_text);
+                        Toast.makeText(getContext(), "Added to Favourites",
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
             }

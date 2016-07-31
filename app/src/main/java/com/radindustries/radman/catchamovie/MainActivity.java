@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_sync) {
             MovieSyncAdapter.syncImmediately(this);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
